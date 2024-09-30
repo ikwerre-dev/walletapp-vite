@@ -4,7 +4,7 @@ import { Routes, Route } from 'react-router-dom'
 const Splash = () => {
     return (
         <>
-        <p>loading</p>
+        <p>Home</p>
         </>
     )
 }

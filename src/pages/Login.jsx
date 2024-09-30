@@ -1,12 +1,12 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 
-const Splash = () => {
+const Login = () => {
     return (
         <>
-        <p>loading</p>
+            <p>login</p>
         </>
     )
 }
 
-export default Splash
+export default Login
