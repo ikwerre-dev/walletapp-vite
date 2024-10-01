@@ -37,7 +37,6 @@ function App() {
     const [selectedPackage, setSelectedPackage] = useState(packages[0]);
     const [selectedCurrency, setSelectedCurrency] = useState('USD');
     const [IntiatePaymentModal, setIntiatePaymentModal] = useState(false);
-    const [proof, setProof] = useState(""); // To hold the base64 encoded image
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
@@ -51,9 +50,9 @@ function App() {
     const closePaymentMethodModal = () => setIsPaymentMethodModalOpen(false);
 
     const openIntiatePaymentModal = () => {
-        if(proof == null || proof == ''){
+        if (proof == null || proof == '') {
             toast.error("Payment Proof is required");
-         }else{
+        } else {
             toast.info("Your Payment is being processed");
             setIntiatePaymentModal(true);
         }
@@ -139,10 +138,45 @@ function App() {
     const paymentMethods = [
 
     ];
-    
-    const PaymentMethod = ({ name, providers, qr, data, instruction, isSelected, onClick }) => {
 
-        const handleCopy = () => {
+
+   
+
+    //     const [proof, setProof] = useState(""); // To hold the base64 encoded image
+
+    //     const handleProofChange = (event) => {
+    //         const file = event.target.files[0];
+    //         if (file) {
+    //             const reader = new FileReader();
+    //             reader.onloadend = () => {
+    //                 setProof(reader.result);
+    //             };
+    //             reader.readAsDataURL(file);
+    //         }
+    //     };
+
+
+
+    //     return (
+
+    //     );
+    // };
+
+    const PaymentMethod = ({ name, providers, qr, data, instruction, isSelected, onClick }) => {
+        const [proof, setProof] = useState(""); // To hold the base64 encoded image
+    
+        const handleProofChange = (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setProof(reader.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+             const handleCopy = () => {
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(data)
                     .then(() => {
@@ -168,33 +202,11 @@ function App() {
                 }
             }
         };
-
-        // Handle file input for proof of deposit
-        const handleFileChange = (event) => {
-             const file = event.target.files[0];
-            console.log(file)
-
-            if (file && file.type.startsWith('image/')) { // Ensure the file is an image
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-
-                reader.onloadend = () => {
-                    setProof(reader.result); // Save the Base64 image to the state
-                    toast.success("Proof of deposit uploaded!");
-                };
-
-                reader.onerror = () => {
-                    toast.error("Failed to upload proof of deposit.");
-                };
-            } else {
-                toast.error("Please upload a valid image file.");
-            }
-        };
-
+    
         return (
-            <div
+             <div
                 className="flex border border-sm rounded-2xl border-blue-200 items-center py-5 px-6 cursor-pointer"
-                onClick={onClick}
+                 
             >
                 <div className="flex-grow">
                     <p className={`text-sm ${isSelected ? 'text-blue-600' : 'text-gray-700'}`}>{name}</p>
@@ -215,23 +227,24 @@ function App() {
                     <p className='text-xs my-3 flex gap-2 text-gray-500'><Info size={15} /> {instruction}</p>
                     <hr className='my-2' />
                     <div className="">
-                        <label htmlFor="proof" className='text-xs'>Upload Proof of Deposit</label>
-                        <input
-                            type="file"
-                            id="proof"
-                            accept="image/*" // Ensure only images are accepted
-                            className="w-full text-xs"
-                            title="Enter Proof of Deposit"
-                            onChange={handleFileChange} 
-                         />
-                    </div>
-                    {proof && (
-                        <div className="mt-4">
-                            <img src={proof} alt="Proof of deposit preview" className="w-full h-auto" />
-                        </div>
-                    )}
+                    <label htmlFor="proof" className='text-xs'>Upload Proof of Deposit</label>
+                    <input
+                        type="file"
+                        name='proof'
+                        id="proof"
+                        accept="image/*" 
+                        className="w-full text-xs"
+                        title="Enter Proof of Deposit"
+                        onChange={handleProofChange} 
+                    />
                 </div>
-            </div>
+                {proof && (
+                    <div className="mt-4">
+                        <img src={proof} alt="Proof of deposit preview" className="w-full h-auto" />
+                    </div>
+                )}
+                </div>
+            </div> 
         );
     };
 
