@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, Link2, Plus } from 'lucide-react';
 
 const TransactionPopup = ({ transaction, onClose }) => {
   const popupRef = useRef(null);
@@ -11,12 +11,10 @@ const TransactionPopup = ({ transaction, onClose }) => {
   };
 
   useEffect(() => {
-    // Add event listener for clicks outside the popup
-    document.addEventListener('mousedown', handleClickOutside);
+     document.addEventListener('mousedown', handleClickOutside);
 
     return () => {
-      // Cleanup the event listener on component unmount
-      document.removeEventListener('mousedown', handleClickOutside);
+       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
@@ -29,7 +27,7 @@ const TransactionPopup = ({ transaction, onClose }) => {
           </div>
           <div>
             <h3 className="font-bold text-lg">{transaction.name}</h3>
-            <p className="text-gray-500">Retailer corporation</p>
+            <p className="text-gray-500">#{transaction.transactionNo}</p>
           </div>
         </div>
         <div className="bg-red-50 rounded-xl p-4 mb-4">
@@ -53,9 +51,9 @@ const History = () => {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
 
   const transactions = [
-    { name: 'Walmart', date: 'Today 12:32', amount: -35.23, icon: '🛒', transactionNo: '230104124324314' },
-    { name: 'Top up', date: 'Yesterday 02:12', amount: 430.00, icon: '💳', transactionNo: '230104124324315' },
-    { name: 'Netflix', date: 'Dec 24 13:53', amount: -13.00, icon: '🎬', transactionNo: '230104124324316' },
+    { name: 'Earning', date: 'Today 12:32', amount: -35.23, icon: <Plus  size={20}/>, transactionNo: '230104124324314' },
+    { name: 'Top up', date: 'Yesterday 02:12', amount: 430.00, icon: <ArrowUp  size={20}/>, transactionNo: '230104124324315' },
+    { name: 'Referral', date: 'Dec 24 13:53', amount: 13.00, icon: <Link2  size={20}/>, transactionNo: '230104124324316' },
   ];
 
   return (
