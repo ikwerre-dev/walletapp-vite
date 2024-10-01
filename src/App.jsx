@@ -11,6 +11,7 @@ import History from './pages/History';
 import More from './pages/More';
 import NotFound from './pages/NotFound';
 import Deposit from './pages/Deposit';
+import ShareButton from './pages/Splash';
 const App = () => {
 
   const location = useLocation();
@@ -21,6 +22,7 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/" element={<Home />} />
         <Route path="/earn" element={<Earn />} />
+        <Route path="/splash" element={<ShareButton />} />
         <Route path="/deposit" element={<Deposit />} />
         <Route path="/history" element={<History />} />
         <Route path="/login" element={<Login />} />

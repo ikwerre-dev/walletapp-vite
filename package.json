@@ -14,6 +14,7 @@
     "@studio-freight/lenis": "^1.0.42",
     "autoprefixer": "^10.4.20",
     "lucide-react": "^0.446.0",
+    "npx": "^10.2.2",
     "postcss": "^8.4.47",
     "qrcode.react": "^4.0.1",
     "react": "^18.3.1",
