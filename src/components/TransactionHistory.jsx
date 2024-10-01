@@ -1,0 +1,41 @@
+import React from 'react'
+import { Routes, Route } from 'react-router-dom'
+import { Settings, ArrowUp, ArrowDown, RefreshCw, Home, Clock, CreditCard, MoreHorizontal, Link2, Plus, DollarSign, Minus } from 'lucide-react';
+import user from '../assets/user.png';
+import cardBg from '../assets/card-bg.png';
+import { Link } from 'react-router-dom';
+const TransactionHistory = () => {
+    return (
+        <div className="mb-4">
+            <div className="flex justify-between items-center mb-2">
+                <h3 className="font-bold">Latest Transactions</h3>
+                <Link to="/history" className="text-indigo-600 text-sm">View all</Link>
+            </div>
+            {[
+                { name: 'Deposit', date: 'Today 12:32', amount: 35.23, icon: <Plus size={20} /> },
+                { name: 'Earnings', date: 'Yesterday 02:12', amount: 430.00, icon: <DollarSign size={20} /> },
+                { name: 'Withdrawal', date: 'Dec 24 13:53', amount: -13.00, icon: <Minus size={20} /> },
+            ].map((transaction, index) => (
+                <div key={index} className="flex items-center justify-between py-2">
+                    <div className="flex items-center">
+                        <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                            <span className="text-lg">{transaction.icon}</span>
+                        </div>
+                        <div>
+                            <p className="font-semibold text-sm">{transaction.name}</p>
+                            <p className="text-xs text-gray-500 text-xs">{transaction.date}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center">
+                        <span className={`font-semibold ${transaction.amount > 0 ? 'text-green-500' : 'text-red-500'}`}>
+                            {transaction.amount > 0 ? '+' : '-'}${Math.abs(transaction.amount).toFixed(2)}
+                        </span>
+                        <ArrowUp className="w-4 h-4 ml-2 transform rotate-45" />
+                    </div>
+                </div>
+            ))}
+        </div>
+    )
+}
+
+export default TransactionHistory

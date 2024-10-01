@@ -2,20 +2,15 @@ import React from 'react';
 import { Settings, ArrowUp, ArrowDown, RefreshCw, Home, Clock, CreditCard, MoreHorizontal, Link2, Plus } from 'lucide-react';
 import user from '../assets/user.png';
 import cardBg from '../assets/card-bg.png';
+import BalanceCard from '../components/BalanceCard';
 
 const Earn = () => {
     return (
         <div className="flex flex-col h-screen mb-[5rem] bg-[#270685] text-white">
 
-            <div
-                className="bg-[#270685] mx-4 my-3 p-4 py-6 rounded-3xl shadow-lg bg-cover bg-center"
-                style={{ backgroundImage: `url(${cardBg})`, backgroundPosition: 'center' }}
-            >        <p className="text-center text-xs text-gray-300 opacity-80 mb-2">Main balance</p>
-                <h2 className="text-center text-3xl font-bold mb-4">$14,235.34</h2>
-                
-            </div>
+            <BalanceCard type={2} />
 
-             <div className="bg-white text-black p-4 rounded-t-3xl mt-4 flex-grow">
+             <div className="bg-white text-black p-4 px-6 rounded-t-3xl mt-4 flex-grow">
                 <h3 className="font-bold mb-4">Earn</h3>
                 <div className="flex space-x-4 overflow-scroll mb-6">
                     <button className="flex flex-col items-center">

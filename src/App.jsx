@@ -9,6 +9,8 @@ import Footer from './pages/Footer';
 import Earn from './pages/Earn';
 import History from './pages/History';
 import More from './pages/More';
+import NotFound from './pages/NotFound';
+import Deposit from './pages/Deposit';
 const App = () => {
 
   const location = useLocation();
@@ -19,10 +21,12 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/" element={<Home />} />
         <Route path="/earn" element={<Earn />} />
+        <Route path="/deposit" element={<Deposit />} />
         <Route path="/history" element={<History />} />
         <Route path="/login" element={<Login />} />
         <Route path="/more" element={<More />} />
         <Route path="/forgot-password" element={<RecoverPassword />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       {['/login', '/signup'].includes(location.pathname) ? '' : <Footer />}
     </>
