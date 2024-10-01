@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, X, Camera, Clipboard, Info } from 'lucide-react';
 import BalanceCard from '../components/BalanceCard';
 import { toast } from 'react-toastify';
-import { QRCode } from 'react-qr-code'; // Import the QRCode component
+import { QRCode } from 'react-qr-code';
 import { Link } from 'react-router-dom';
+import { NumericFormat } from 'react-number-format';
+
 const cryptos = [
     { symbol: 'BTC', name: 'Bitcoin', color: 'bg-orange-500', qr: true, data: "Btc13084h3niw7r9r34n", instruction: "Pay to this wallet" },
     { symbol: 'UDST', name: 'Usdt', color: 'bg-orange-500', qr: true, data: "Btc13084h3niw7r9r34n", instruction: "Pay to this wallet" },
@@ -12,29 +14,50 @@ const cryptos = [
 
 ];
 
+const packages = [
+    { name: 'Lite', color: 'bg-orange-500', min: 10, max: 30 },
+    { name: 'Standard', color: 'bg-blue-500', min: 100, max: 300 },
+    { name: 'Premium', color: 'bg-green-500', min: 1000, max: 3000 },
+    { name: 'Gold', color: 'bg-indigo-500', min: 10000, max: 30000 },
+    { name: 'Emerald', color: 'bg-slate-500', min: 100000, max: 300000 },
+
+];
+
 
 function App() {
     const [walletAddress, setWalletAddress] = useState('');
     const [amount, setAmount] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isPackageModalOpen, setIsPackageModalOpen] = useState(false);
     const [isPaymentMethodModalOpen, setIsPaymentMethodModalOpen] = useState(false);
     const [isKeypadModalOpen, setisKeypadModalOpen] = useState(false);
     const [isScannerOpen, setIsScannerOpen] = useState(false);
     const [isCurrencyModalOpen, setIsCurrencyModalOpen] = useState(false);
     const [selectedCrypto, setSelectedCrypto] = useState(cryptos[0]);
+    const [selectedPackage, setSelectedPackage] = useState(packages[0]);
     const [selectedCurrency, setSelectedCurrency] = useState('USD');
     const [IntiatePaymentModal, setIntiatePaymentModal] = useState(false);
+    const [proof, setProof] = useState(""); // To hold the base64 encoded image
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
+
+
+    const openPackageModal = () => setIsPackageModalOpen(true);
+    const closePackageModal = () => setIsPackageModalOpen(false);
 
 
     const openPaymentMethodModal = () => setIsPaymentMethodModalOpen(true);
     const closePaymentMethodModal = () => setIsPaymentMethodModalOpen(false);
 
     const openIntiatePaymentModal = () => {
-        toast.info("Your Payment is being processed");
-        setIntiatePaymentModal(true);
+        if(proof == null || proof == ''){
+            toast.error("Payment Proof is required");
+         }else{
+            toast.info("Your Payment is being processed");
+            setIntiatePaymentModal(true);
+        }
+
     };
     const closeIntiatePaymentModal = () => setIntiatePaymentModal(false);
 
@@ -57,12 +80,14 @@ function App() {
     };
 
     const getquote = () => {
-        if (amount < 10) {
-            toast("Atleast a minimum of $10 is needed!");
-            return;
+        if (amount < selectedPackage.min) {
+            toast.error("Minimum amount is $" + selectedPackage.min.toLocaleString());
+        } else if (amount > selectedPackage.max) {
+            toast.error("Maximum amount is $" + selectedPackage.max.toLocaleString());
+        } else {
+            openPaymentMethodModal();
         }
 
-        openPaymentMethodModal();
 
     }
 
@@ -78,6 +103,12 @@ function App() {
         closeModal();
     };
 
+
+    const selectPackage = (Package) => {
+        setSelectedPackage(Package);
+        closePackageModal();
+    };
+
     const handleKeyPress = (key) => {
         if (key === 'backspace') {
             setAmount(prev => prev.slice(0, -1));
@@ -90,20 +121,27 @@ function App() {
         }
     };
     const CompleteKeypad = (amount) => {
-        // alert(amount)
-        amount < 1 ? amount = 0 : amount;
+        if (amount < 1) amount = 0;
+
         const formattedAmount = parseFloat(amount).toFixed(2);
-        setAmount(formattedAmount);
-        closeKeypadModal();
+
+        if (amount < selectedPackage.min) {
+            toast.error("Minimum amount is $" + selectedPackage.min.toLocaleString());
+        } else if (amount > selectedPackage.max) {
+            toast.error("Maximum amount is $" + selectedPackage.max.toLocaleString());
+        } else {
+            setAmount(formattedAmount);
+            closeKeypadModal();
+        }
     };
     const [selectedMethod, setSelectedMethod] = useState('Credit Card');
 
     const paymentMethods = [
 
     ];
-
+    
     const PaymentMethod = ({ name, providers, qr, data, instruction, isSelected, onClick }) => {
-        // Function to handle copy to clipboard
+
         const handleCopy = () => {
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(data)
@@ -115,7 +153,6 @@ function App() {
                         toast.error("Failed to copy!");
                     });
             } else {
-                // Fallback for older browsers
                 const textArea = document.createElement("textarea");
                 textArea.value = data;
                 document.body.appendChild(textArea);
@@ -131,7 +168,28 @@ function App() {
                 }
             }
         };
-        
+
+        // Handle file input for proof of deposit
+        const handleFileChange = (event) => {
+             const file = event.target.files[0];
+            console.log(file)
+
+            if (file && file.type.startsWith('image/')) { // Ensure the file is an image
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+
+                reader.onloadend = () => {
+                    setProof(reader.result); // Save the Base64 image to the state
+                    toast.success("Proof of deposit uploaded!");
+                };
+
+                reader.onerror = () => {
+                    toast.error("Failed to upload proof of deposit.");
+                };
+            } else {
+                toast.error("Please upload a valid image file.");
+            }
+        };
 
         return (
             <div
@@ -150,11 +208,28 @@ function App() {
                     </div>
                     <p onClick={handleCopy} className="text-sm flex justify-between text-black mt-5">
                         {data}
-                        <button  className="flex items-center">
+                        <button className="flex items-center">
                             <Clipboard size={15} />
                         </button>
                     </p>
                     <p className='text-xs my-3 flex gap-2 text-gray-500'><Info size={15} /> {instruction}</p>
+                    <hr className='my-2' />
+                    <div className="">
+                        <label htmlFor="proof" className='text-xs'>Upload Proof of Deposit</label>
+                        <input
+                            type="file"
+                            id="proof"
+                            accept="image/*" // Ensure only images are accepted
+                            className="w-full text-xs"
+                            title="Enter Proof of Deposit"
+                            onChange={handleFileChange} 
+                         />
+                    </div>
+                    {proof && (
+                        <div className="mt-4">
+                            <img src={proof} alt="Proof of deposit preview" className="w-full h-auto" />
+                        </div>
+                    )}
                 </div>
             </div>
         );
@@ -195,6 +270,20 @@ function App() {
                 <h3 className="font-bold mb-4">Deposit</h3>
                 <div className=" h-100 grid relative overflow-hidden">
                     <div className="relative p-2 h-[40rem]">
+                        <h2 className="text-sm font-semibold mb-2">Select Package{' '} <span className="text-blue-500">*</span></h2>
+
+                        <div
+                            className="bg-gray-100 rounded-lg p-4 mb-5 flex items-center justify-between cursor-pointer"
+                            onClick={openPackageModal}
+                        >
+                            <div className="flex items-center">
+
+                                <span className=" text-xs font-semibold">{selectedPackage.name} (Min ${selectedPackage.min.toLocaleString(undefined, { maximumFractionDigits: 2 })} - Max ${selectedPackage.max.toLocaleString(undefined, { maximumFractionDigits: 2 })})</span>
+                            </div>
+                            <ChevronRight className="text-gray-400" />
+                        </div>
+
+
                         <h2 className="text-sm font-semibold mb-2">Select Deposit Method{' '} <span className="text-blue-500">*</span></h2>
 
                         <div
@@ -202,10 +291,10 @@ function App() {
                             onClick={openModal}
                         >
                             <div className="flex items-center">
-                                <div className={`${selectedCrypto.color} text-white rounded-full w-8 h-8 flex items-center justify-center mr-3`}>
+                                <div className={`${selectedCrypto.color} text-white text-sm rounded-full w-6 h-6 flex items-center justify-center mr-3`}>
                                     {selectedCrypto.symbol[0]}
                                 </div>
-                                <span className="font-semibold">{selectedCrypto.name} ({selectedCrypto.symbol})</span>
+                                <span className=" text-xs font-semibold">{selectedCrypto.name} ({selectedCrypto.symbol})</span>
                             </div>
                             <ChevronRight className="text-gray-400" />
                         </div>
@@ -219,7 +308,7 @@ function App() {
                                 onClick={openKeypadModal}
                                 readOnly={true}
                                 onChange={(e) => setAmount(e.target.value)}
-                                className="bg-transparent text-l font-semibold w-full outline-none"
+                                className="bg-transparent text-xs font-semibold w-full outline-none"
                             />
                             {/* <div className="flex items-center">
                                 <button
@@ -258,6 +347,31 @@ function App() {
                                                 {crypto.symbol[0]}
                                             </div>
                                             <span>{crypto.name} ({crypto.symbol})</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className={`absolute inset-0 bg-white transform transition-transform z-50 duration-300 ease-in-out ${isPackageModalOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+                            <div className="p-4 h-full overflow-y-auto">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-xl font-bold">Select Package</h3>
+                                    <button onClick={closePackageModal} className="text-gray-500 hover:text-gray-700">
+                                        <X size={24} />
+                                    </button>
+                                </div>
+                                <div className="space-y-2">
+                                    {packages.map((packages) => (
+                                        <div
+                                            key={packages.name}
+                                            className="p-3 rounded-lg hover:bg-gray-100 cursor-pointer flex items-center"
+                                            onClick={() => selectPackage(packages)}
+                                        >
+                                            <div className={`${packages.color} text-white rounded-full w-8 h-8 flex items-center justify-center mr-3`}>
+                                                {packages.name[0]}
+                                            </div>
+                                            <span className='text-sm'> {packages.name} (${packages.min.toLocaleString(undefined, { maximumFractionDigits: 2 })} - ${packages.max.toLocaleString(undefined, { maximumFractionDigits: 2 })})</span>
                                         </div>
                                     ))}
                                 </div>
@@ -308,12 +422,12 @@ function App() {
                                 </div>
                                 <Link
                                     to="/"
-                                   
+
                                 >
                                     <button
-                                    className="w-full bg-blue-600 text-white py-3 mt-3 rounded-lg font-semibold"
-                                >
-                                    Continue
+                                        className="w-full bg-blue-600 text-white py-3 mt-3 rounded-lg font-semibold"
+                                    >
+                                        Continue
                                     </button>
                                 </Link>
                             </div>
@@ -331,8 +445,8 @@ function App() {
                                     <div className="text-gray-500">Amount</div>
                                 </div>
                                 <div className="flex justify-end mb-6">
-                                    <button onClick={openModal} className={`${selectedCrypto.color} bg-blue-100 text-blue-700 px-3 py-1 rounded-full flex items-center`}>
-                                        {selectedCrypto.name} <ChevronRight className="ml-1" size={16} />
+                                    <button onClick={openPackageModal} className={`${selectedPackage.color} bg-blue-100 text-white px-3 py-1 rounded-full flex items-center`}>
+                                        {selectedPackage.name} (Min ${selectedPackage.min.toLocaleString(undefined, { maximumFractionDigits: 2 })} - Max ${selectedPackage.max.toLocaleString(undefined, { maximumFractionDigits: 2 })})
                                     </button>
                                 </div>
                                 <div className="grid grid-cols-3 gap-4 mb-6">
