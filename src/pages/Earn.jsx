@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, ArrowUp, ArrowDown, RefreshCw, Home, Clock, CreditCard, MoreHorizontal, Link2, Plus } from 'lucide-react';
+import { Settings, ArrowUp, ArrowDown, RefreshCw, Home, Clock, CreditCard, MoreHorizontal, Link2, Plus, Info } from 'lucide-react';
 import user from '../assets/user.png';
 import cardBg from '../assets/card-bg.png';
 import BalanceCard from '../components/BalanceCard';
@@ -94,15 +94,19 @@ const Earn = ({ maxShares = 20 }) => {
 
                     <div className="mb-4">
                         <h4 className="font-semibold mb-2">Share to earn:</h4>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="">
+                            <p className='text-xs mb-2 flex gap-2'><p><Info size={15} /> </p>Our system can detect if the link was not shared, Which may result to freezing of your account</p>
+                            <p className='text-xs flex mb-2 gap-2'><p><Info size={15} /> </p> You'll earn more whenever someone clicks the referral link and joins</p>
+                        </div>
+                        <div className="flex flex-wrap gap-2 mt-5">
                             {shareLinks.map((link, index) => (
                                 <button
                                     key={index}
-                                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                    className="flex  items-center  w-full gap-5 px-4 py-2 text-sm   text-gray-700 bg-indigo-500 text-white font-bold border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                     onClick={handleShare}
                                 >
                                     <Share2 className="w-4 h-4" />
-                                    {link.title}
+                                    <p>{link.title}</p>
                                 </button>
                             ))}
                         </div>
