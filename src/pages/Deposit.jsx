@@ -32,7 +32,10 @@ function App() {
     const openPaymentMethodModal = () => setIsPaymentMethodModalOpen(true);
     const closePaymentMethodModal = () => setIsPaymentMethodModalOpen(false);
 
-    const openIntiatePaymentModal = () => setIntiatePaymentModal(true);
+    const openIntiatePaymentModal = () => {
+        toast.info("Your Payment is being processed");
+        setIntiatePaymentModal(true);
+    };
     const closeIntiatePaymentModal = () => setIntiatePaymentModal(false);
 
 
@@ -295,7 +298,7 @@ function App() {
                         <div className={`absolute inset-0 bg-white transform transition-transform z-50 duration-300 ease-in-out ${IntiatePaymentModal ? 'translate-x-0' : 'translate-x-full'}`}>
                             <div className="p-4 h-full overflow-y-auto">
                                 <div className="flex justify-between items-center mb-4">
-                                    <h3 className="text-xl font-bold">{selectedMethod} Payment</h3>
+                                    <h3 className="text-xl font-bold">{selectedCrypto.name} Payment</h3>
                                     <button onClick={closeIntiatePaymentModal} className="text-gray-500 hover:text-gray-700">
                                         <X size={24} />
                                     </button>
@@ -304,11 +307,11 @@ function App() {
                                     <p>Your Deposit is being processed, Please await confirmation</p>
                                 </div>
                                 <Link
+                                    to="/"
                                    
                                 >
                                     <button
                                     className="w-full bg-blue-600 text-white py-3 mt-3 rounded-lg font-semibold"
-                                    to="/"
                                 >
                                     Continue
                                     </button>
