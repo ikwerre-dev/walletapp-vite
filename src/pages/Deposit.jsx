@@ -304,10 +304,14 @@ function App() {
                                     <p>Your Deposit is being processed, Please await confirmation</p>
                                 </div>
                                 <Link
+                                   
+                                >
+                                    <button
                                     className="w-full bg-blue-600 text-white py-3 mt-3 rounded-lg font-semibold"
                                     to="/"
                                 >
                                     Continue
+                                    </button>
                                 </Link>
                             </div>
                         </div>
