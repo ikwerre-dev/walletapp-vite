@@ -3,10 +3,10 @@ import { ChevronLeft, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 const CreateAccountForm = () => {
     return (
-        <div className="flex flex-col h-screen bg-white p-4">
+        <div className=" flex-col min-h-screen align-center bg-indigo-100 p-4">
 
 
-            <main className="flex-grow my-[5rem]">
+            <main className="flex-grow my-[5rem] bg-white p-[2.5rem] rounded rounded-2xl">
                 <h2 className="text-2xl font-bold mb-6">Create Account</h2>
                 <form className="space-y-4">
                     <div>
@@ -16,6 +16,10 @@ const CreateAccountForm = () => {
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
                         <input type="email" id="email" placeholder="e.g. email@example.com" className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+                    </div>
+                    <div>
+                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone</label>
+                        <input type="tel" id="phone" placeholder="+1 (234) 5678" className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
                     </div>
                     <div>
                         <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
@@ -37,7 +41,7 @@ const CreateAccountForm = () => {
                     </button>
                 </form>
                 <div className="mt-6 text-center">
-                    <p className="text-sm text-gray-500">Already have an account? <Link to="/login">Login</Link></p>
+                    <p className="text-sm text-gray-500">Already have an account? <Link to="/login" className='text-indigo-700'>Login</Link></p>
 
                 </div>
             </main>
