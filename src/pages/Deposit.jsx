@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, X, Camera, Clipboard, Info } from 'lucide-re
 import BalanceCard from '../components/BalanceCard';
 import { toast } from 'react-toastify';
 import { QRCode } from 'react-qr-code'; // Import the QRCode component
+import { Link } from 'react-router-dom';
 const cryptos = [
     { symbol: 'BTC', name: 'Bitcoin', color: 'bg-orange-500', qr: true, data: "Btc13084h3niw7r9r34n", instruction: "Pay to this wallet" },
     { symbol: 'UDST', name: 'Usdt', color: 'bg-orange-500', qr: true, data: "Btc13084h3niw7r9r34n", instruction: "Pay to this wallet" },
@@ -285,7 +286,7 @@ function App() {
                                     className="w-full bg-blue-600 text-white py-3 mt-3 rounded-lg font-semibold"
                                     onClick={() => openIntiatePaymentModal()}
                                 >
-                                    Continue
+                                    I have Paid
                                 </button>
                             </div>
                         </div>
@@ -294,20 +295,20 @@ function App() {
                         <div className={`absolute inset-0 bg-white transform transition-transform z-50 duration-300 ease-in-out ${IntiatePaymentModal ? 'translate-x-0' : 'translate-x-full'}`}>
                             <div className="p-4 h-full overflow-y-auto">
                                 <div className="flex justify-between items-center mb-4">
-                                    <h3 className="text-xl font-bold">Enter {selectedMethod} details</h3>
+                                    <h3 className="text-xl font-bold">{selectedMethod} Payment</h3>
                                     <button onClick={closeIntiatePaymentModal} className="text-gray-500 hover:text-gray-700">
                                         <X size={24} />
                                     </button>
                                 </div>
                                 <div className="space-y-2 mt-[2rem]">
-                                    {renderInputFields()}
+                                    <p>Your Deposit is being processed, Please await confirmation</p>
                                 </div>
-                                <button
+                                <Link
                                     className="w-full bg-blue-600 text-white py-3 mt-3 rounded-lg font-semibold"
-                                    onClick={() => openIntiatePaymentModal()}
+                                    to="/"
                                 >
                                     Continue
-                                </button>
+                                </Link>
                             </div>
                         </div>
 
