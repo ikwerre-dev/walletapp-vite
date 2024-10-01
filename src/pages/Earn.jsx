@@ -2,53 +2,21 @@ import React from 'react';
 import { Settings, ArrowUp, ArrowDown, RefreshCw, Home, Clock, CreditCard, MoreHorizontal, Link2, Plus } from 'lucide-react';
 import user from '../assets/user.png';
 import cardBg from '../assets/card-bg.png';
-import { Link } from 'react-router-dom';
 
-const BankingHomeScreen = () => {
+const Earn = () => {
     return (
         <div className="flex flex-col h-screen mb-[5rem] bg-[#270685] text-white">
-            <header className="flex justify-between items-center p-4">
-                <div className="flex items-center space-x-3">
-                    <img src={user} alt="User" className="w-10 h-10 rounded-full" />
-                    <div>
-                        <p className="text-xs opacity-80">Hello,</p>
-                        <h1 className="text-sm font-bold">Alexxie!</h1>
-                    </div>
-                </div>
-                <button className="p-2">
-                    <Settings className="w-6 h-6" />
-                </button>
-            </header>
 
             <div
-                className="bg-[#4e32a3] mx-4 my-3 p-4 py-6 rounded-3xl shadow-lg bg-cover bg-center"
+                className="bg-[#270685] mx-4 my-3 p-4 py-6 rounded-3xl shadow-lg bg-cover bg-center"
                 style={{ backgroundImage: `url(${cardBg})`, backgroundPosition: 'center' }}
             >        <p className="text-center text-xs text-gray-300 opacity-80 mb-2">Main balance</p>
                 <h2 className="text-center text-3xl font-bold mb-4">$14,235.34</h2>
-                <div className="flex justify-around">
-                    <button className="flex flex-col items-center">
-                        <div className=" p-2 rounded-full ">
-                            <ArrowUp className="w-4 h-4" />
-                        </div>
-                        <span className="text-xs">Top up</span>
-                    </button>
-                    <button className="flex flex-col items-center">
-                        <div className=" p-2 rounded-full ">
-                            <ArrowDown className="w-4 h-4" />
-                        </div>
-                        <span className="text-xs">Withdraw</span>
-                    </button>
-                    <button className="flex flex-col items-center">
-                        <div className=" p-2 rounded-full ">
-                            <Plus className="w-4 h-4" />
-                        </div>
-                        <span className="text-xs">Earn</span>
-                    </button>
-                </div>
+                
             </div>
 
              <div className="bg-white text-black p-4 rounded-t-3xl mt-4 flex-grow">
-                <h3 className="font-bold mb-4">Recent Referrals</h3>
+                <h3 className="font-bold mb-4">Earn</h3>
                 <div className="flex space-x-4 overflow-scroll mb-6">
                     <button className="flex flex-col items-center">
                         <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-1">
@@ -74,7 +42,7 @@ const BankingHomeScreen = () => {
                  <div className="mb-4">
                     <div className="flex justify-between items-center mb-2">
                         <h3 className="font-bold">Latest Transactions</h3>
-                        <Link to="/history" className="text-indigo-600 text-sm">View all</Link>
+                        <button className="text-indigo-600 text-sm">View all</button>
                     </div>
                     {[
                         { name: 'Deposit', date: 'Today 12:32', amount: 35.23, icon: '+' },
@@ -107,4 +75,4 @@ const BankingHomeScreen = () => {
     );
 };
 
-export default BankingHomeScreen;
+export default Earn;

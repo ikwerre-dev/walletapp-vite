@@ -6,4 +6,5 @@
 body {
   font-family: "Sora";
   font-weight: 900;
+  scroll-behavior: smooth;
 }

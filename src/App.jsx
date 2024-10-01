@@ -6,26 +6,11 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import RecoverPassword from './pages/RecoverPassword';
 import Footer from './pages/Footer';
-
+import Earn from './pages/Earn';
+import History from './pages/History';
+import More from './pages/More';
 const App = () => {
-  useEffect(() => {
-     const lenis = new Lenis({
-      duration: 10.2,  
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),  
-      smooth: true,
-      direction: 'vertical',  
-    });
 
-     const raf = (time) => {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    };
-    requestAnimationFrame(raf);
-
-     return () => {
-      lenis.destroy();
-    };
-  }, []);
   const location = useLocation();
 
   return (
@@ -33,10 +18,13 @@ const App = () => {
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/" element={<Home />} />
+        <Route path="/earn" element={<Earn />} />
+        <Route path="/history" element={<History />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/more" element={<More />} />
         <Route path="/forgot-password" element={<RecoverPassword />} />
       </Routes>
-      {location.pathname === '/' && <Footer />}
+      {['/', '/earn','/history','/more'].includes(location.pathname) && <Footer />}
     </>
   );
 };
