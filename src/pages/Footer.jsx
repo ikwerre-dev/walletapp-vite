@@ -4,7 +4,7 @@ import { Home, Plus, Clock, MoreHorizontal, ArrowUp, DollarSign } from 'lucide-r
 
 const Footer = () => {
     return (
-        <nav className="fixed bottom-0 bg-white w-full text-gray-500 flex justify-around py-2">
+        <nav className="fixed bottom-0 bg-white w-full text-gray-500 z-40 flex justify-around py-2">
             <NavLink
                 to="/"
                 className={({ isActive }) => `flex flex-col items-center ${isActive ? 'text-indigo-600' : ''}`}>
