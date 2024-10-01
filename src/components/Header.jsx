@@ -6,7 +6,7 @@ import cardBg from '../assets/card-bg.png';
 import { Link } from 'react-router-dom';
 const Header = () => {
     return (
-        <header className="flex justify-between sticky z-50 top-0 bg-[#270685] items-center p-4">
+        <header className="flex justify-between sticky z-40 top-0 bg-[#270685] items-center p-4">
             <div className="flex items-center space-x-3">
                 <img src={user} alt="User" className="w-10 h-10 rounded-full" />
                 <div>
