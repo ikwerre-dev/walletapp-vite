@@ -6,9 +6,7 @@ import BalanceCard from '../components/BalanceCard';
 import { Share2 } from 'lucide-react';
 
 const shareLinks = [
-    { title: 'Share on Facebook', url: 'https://www.facebook.com/sharer/sharer.php?u=' },
-    { title: 'Share on Twitter', url: 'https://twitter.com/intent/tweet?url=' },
-    { title: 'Share on LinkedIn', url: 'https://www.linkedin.com/shareArticle?mini=true&url=' },
+    { title: 'Share The Link', url: 'https://www.facebook.com/sharer/sharer.php?u=' },
 ];
 
 const Earn = ({ maxShares = 20 }) => {
@@ -18,20 +16,29 @@ const Earn = ({ maxShares = 20 }) => {
 
     const handleShare = async () => {
         if (navigator.share) {
-          try {
-            await navigator.share({
-              title: 'Check out this amazing site!',
-              text: 'Here is some interesting content I found.',
-              url: window.location.href, // You can customize the URL here
-            });
-            console.log('Content shared successfully');
-          } catch (error) {
-            console.error('Error sharing:', error);
-          }
+            try {
+                await navigator.share({
+                    title: 'Get paid just by sharing post on Facebook!',
+                    text: 'Check out this amazing site, I did it and it’s working! I got paid to Cash App, click the link and try it.',
+                    url: window.location.href,
+                });
+                console.log('Share dialog opened successfully');
+
+                // Update the share progress immediately after the share dialog is opened
+                if (progress < maxShares) {
+                    const newProgress = progress + 1;
+                    setProgress(newProgress);
+                    if (newProgress === maxShares) {
+                        setShowClaimButton(true);
+                    }
+                }
+            } catch (error) {
+                console.error('Error sharing:', error);
+            }
         } else {
-          alert('Web Share API is not supported in your browser.');
+            alert('Web Share API is not supported in your browser.');
         }
-      };
+    };
 
     const handleClaim = () => {
         setClaimed(true);
