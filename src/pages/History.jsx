@@ -6,8 +6,8 @@ import cardBg from '../assets/card-bg.png';
 const History = () => {
     return (
         <div className="flex flex-col h-screen mb-[5rem] bg-[#270685] text-white">
-            <header className="flex justify-between items-center p-4">
-                <div className="flex items-center space-x-3">
+            <header className="flex justify-between sticky z-50 top-0 bg-[#270685] items-center p-4">
+            <div className="flex items-center space-x-3">
                     <img src={user} alt="User" className="w-10 h-10 rounded-full" />
                     <div>
                         <p className="text-xs opacity-80">Hello,</p>

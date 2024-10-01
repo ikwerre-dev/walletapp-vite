@@ -7,8 +7,8 @@ import { Link } from 'react-router-dom';
 const BankingHomeScreen = () => {
     return (
         <div className="flex flex-col h-screen mb-[5rem] bg-[#270685] text-white">
-            <header className="flex justify-between items-center p-4">
-                <div className="flex items-center space-x-3">
+            <header className="flex justify-between sticky z-50 top-0 bg-[#270685] items-center p-4">
+            <div className="flex items-center space-x-3">
                     <img src={user} alt="User" className="w-10 h-10 rounded-full" />
                     <div>
                         <p className="text-xs opacity-80">Hello,</p>
@@ -26,12 +26,12 @@ const BankingHomeScreen = () => {
             >        <p className="text-center text-xs text-gray-300 opacity-80 mb-2">Main balance</p>
                 <h2 className="text-center text-3xl font-bold mb-4">$14,235.34</h2>
                 <div className="flex justify-around">
-                    <button className="flex flex-col items-center">
+                    <Link to='/deposit' className="flex flex-col items-center">
                         <div className=" p-2 rounded-full ">
                             <ArrowUp className="w-4 h-4" />
                         </div>
-                        <span className="text-xs">Top up</span>
-                    </button>
+                        <span className="text-xs">Deposit</span>
+                    </Link>
                     <button className="flex flex-col items-center">
                         <div className=" p-2 rounded-full ">
                             <ArrowDown className="w-4 h-4" />

@@ -27,10 +27,11 @@ const Login = () => {
                         <p className="text-sm text-gray-500">Forgot Password? <Link to="/forgot-password" className='text-indigo-700'>Recover Account</Link></p>
 
                     </div>
-
-                    <button type="submit" className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Login
-                    </button>
+                    <Link to={'/'}>
+                        <button type="submit" className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Login
+                        </button>
+                    </Link>
                 </form>
                 <div className="mt-6 text-center">
                     <p className="text-sm text-gray-500">Dont have an account? <Link to="/signup" className='text-indigo-700'>Signup</Link></p>

@@ -24,7 +24,7 @@ const App = () => {
         <Route path="/more" element={<More />} />
         <Route path="/forgot-password" element={<RecoverPassword />} />
       </Routes>
-      {['/', '/earn','/history','/more'].includes(location.pathname) && <Footer />}
+      {['/login', '/signup'].includes(location.pathname) ? '' : <Footer />}
     </>
   );
 };
