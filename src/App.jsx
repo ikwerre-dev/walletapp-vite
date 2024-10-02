@@ -12,6 +12,8 @@ import More from './pages/More';
 import NotFound from './pages/NotFound';
 import Deposit from './pages/Deposit';
 import ShareButton from './pages/Splash';
+import Withdraw from './pages/Withdraw';
+import Settings from './pages/Settings';
 const App = () => {
 
   const location = useLocation();
@@ -24,7 +26,10 @@ const App = () => {
         <Route path="/earn" element={<Earn />} />
         <Route path="/splash" element={<ShareButton />} />
         <Route path="/deposit" element={<Deposit />} />
+        <Route path="/withdraw" element={<Withdraw />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="/history" element={<History />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/more" element={<More />} />
         <Route path="/forgot-password" element={<RecoverPassword />} />

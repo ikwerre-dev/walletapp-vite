@@ -11,7 +11,7 @@ const Header = () => {
                 <img src={user} alt="User" className="w-10 h-10 rounded-full" />
                 <div>
                     <p className="text-xs opacity-80">Hello,</p>
-                    <h1 className="text-sm font-bold">Alexxie!</h1>
+                    <h1 className="text-sm font-bold">Honour!</h1>
                 </div>
             </div>
             <Link to='/settings' className="p-2">

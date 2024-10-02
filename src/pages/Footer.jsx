@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Plus, Clock, MoreHorizontal, ArrowUp, DollarSign } from 'lucide-react';
+import { Home, Plus, Clock, MoreHorizontal, ArrowUp, DollarSign, ArrowDown } from 'lucide-react';
 
 const Footer = () => {
     return (
@@ -17,6 +17,12 @@ const Footer = () => {
                 className={({ isActive }) => `flex flex-col items-center ${isActive ? 'text-indigo-600' : ''}`}>
                 <ArrowUp className="w-6 h-6" />
                 <span className="text-xs">Deposit</span>
+            </NavLink>
+            <NavLink
+                to="/withdraw"
+                className={({ isActive }) => `flex flex-col items-center ${isActive ? 'text-indigo-600' : ''}`}>
+                <ArrowDown className="w-6 h-6" />
+                <span className="text-xs">Withdraw</span>
             </NavLink>
 
             <NavLink

@@ -27,16 +27,20 @@ const More = () => {
                     <div className=" p-4 w-full">
                         <div className="space-y-2">
                             <MenuItem icon={<Home />} link='/' label="Home" />
-                            <MenuItem icon={<User2 />} link='/profile' label="Profile" />
-                            <MenuItem icon={<Plus />} link='/deposit' label="Deposit" />
+                            <MenuItem icon={<ArrowUp />} link='/deposit' label="Deposit" />
+                            <MenuItem icon={<ArrowDown />} link='/withdraw' label="Withdraw" />
                             <MenuItem icon={<Plus />} link='/earn' label="Earn" />
                             <MenuItem icon={<HistoryIcon />} link='/history' label="History" />
-                            <MenuItem icon={<Settings2 />} link='/settings' label="Settings" />
+                            <MenuItem icon={<Settings2 />} link='/settings' label="Change Password" />
                         </div>
 
                         <div className="border-t border-gray-200 my-4"></div>
+                        <div className="space-y-2">
+
+                        <MenuItem icon={<Settings2 />} link='sms:+15512270514&body=Hello Support, My ID is #123232,' label="Contact Support" />
 
                         <MenuItem icon={<LogOut />} link='/login' label="Logout" />
+                        </div>
                     </div>
 
                 </div>

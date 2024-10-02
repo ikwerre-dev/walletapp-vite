@@ -102,7 +102,7 @@ const Earn = ({ maxShares = 20 }) => {
                             {shareLinks.map((link, index) => (
                                 <button
                                     key={index}
-                                    className="flex  items-center  w-full gap-5 px-4 py-2 text-sm   text-gray-700 bg-indigo-500 text-white font-bold border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                    className="flex  items-center  w-full gap-5 px-4 py-2 text-sm   text-gray-700 bg-indigo-500 text-white font-bold border border-gray-300 rounded-md shadow-sm hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                     onClick={handleShare}
                                 >
                                     <Share2 className="w-4 h-4" />

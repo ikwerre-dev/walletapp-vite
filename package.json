@@ -13,6 +13,8 @@
     "@fontsource/sora": "^5.1.0",
     "@studio-freight/lenis": "^1.0.42",
     "autoprefixer": "^10.4.20",
+    "axios": "^1.7.7",
+    "js-cookie": "^3.0.5",
     "lucide-react": "^0.446.0",
     "npx": "^10.2.2",
     "postcss": "^8.4.47",

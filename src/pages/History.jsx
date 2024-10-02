@@ -3,7 +3,7 @@ import { Settings, ArrowUp, ArrowDown, RefreshCw, Home, Clock, CreditCard, MoreH
 import user from '../assets/user.png';
 import cardBg from '../assets/card-bg.png';
 import Header from '../components/Header';
-
+import TransactionHistory from '../components/TransactionHistory';
 const TransactionPopup = ({ transaction, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-center">
@@ -49,38 +49,11 @@ const History = () => {
       
       <div className="bg-white text-black p-6 px-6 rounded-t-3xl mt-4 flex-grow">
         <div className="mb-4">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="font-bold">Latest Transactions</h3>
-            <button className="text-indigo-600 text-sm">View all</button>
-          </div>
-          {transactions.map((transaction, index) => (
-            <div key={index} className="flex items-center justify-between py-2" onClick={() => setSelectedTransaction(transaction)}>
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-lg">{transaction.icon}</span>
-                </div>
-                <div>
-                  <p className="font-semibold text-sm">{transaction.name}</p>
-                  <p className="text-xs text-gray-500">{transaction.date}</p>
-                </div>
-              </div>
-              <div className="flex items-center">
-                <span className={`font-semibold ${transaction.amount > 0 ? 'text-green-500' : 'text-red-500'}`}>
-                  {transaction.amount > 0 ? '+' : '-'}${Math.abs(transaction.amount).toFixed(2)}
-                </span>
-                <ArrowUp className="w-4 h-4 ml-2 transform rotate-45" />
-              </div>
-            </div>
-          ))}
+        <TransactionHistory />
+
         </div>
       </div>
-
-      {selectedTransaction && (
-        <TransactionPopup
-          transaction={selectedTransaction}
-          onClose={() => setSelectedTransaction(null)}
-        />
-      )}
+ 
     </div>
   );
 };

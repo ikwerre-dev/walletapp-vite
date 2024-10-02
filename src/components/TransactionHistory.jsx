@@ -30,8 +30,10 @@ const TransactionPopup = ({ transaction, onClose }) => {
             <p className="text-gray-500">#{transaction.transactionNo}</p>
           </div>
         </div>
-        <div className="bg-red-50 rounded-xl p-4 mb-4">
-          <p className="text-red-500 text-2xl font-bold">-${Math.abs(transaction.amount).toFixed(2)}</p>
+        <div className={` rounded-xl p-4 mb-4 font-semibold ${transaction.amount > 0 ? 'bg-green-500' : 'bg-red-500'}`}>
+           <span className={`font-semibold text-white`}>
+                {transaction.amount > 0 ? '+' : '-'}${Math.abs(transaction.amount).toFixed(2)}
+              </span>
         </div>
         <p className="text-gray-500 mb-2">{transaction.date}</p>
         <p className="text-gray-500 mb-4">Transaction no.</p>
