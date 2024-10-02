@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import Lenis from '@studio-freight/lenis';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import Cookies from 'js-cookie'; // Import Cookies
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -14,28 +14,44 @@ import Deposit from './pages/Deposit';
 import ShareButton from './pages/Splash';
 import Withdraw from './pages/Withdraw';
 import Settings from './pages/Settings';
-const App = () => {
+import Logout from './pages/Logout';
+const jwt = Cookies.get('jwt'); // Check if JWT exists
 
+const PrivateRoute = ({ element }) => {
+  // const jwt = Cookies.get('jwt'); // Check if JWT exists
+  console.log(jwt)
+  return jwt ? element : <Navigate to="/login" replace />;
+};
+ 
+
+const App = () => {
   const location = useLocation();
 
   return (
     <>
       <Routes>
+        <Route path="/" element={<PrivateRoute element={ <Home />} />} />
+        <Route path="/dashboard" element={<PrivateRoute element={ <Home />} />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/earn" element={<Earn />} />
-        <Route path="/splash" element={<ShareButton />} />
-        <Route path="/deposit" element={<Deposit />} />
-        <Route path="/withdraw" element={<Withdraw />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/history" element={<History />} />
-
         <Route path="/login" element={<Login />} />
-        <Route path="/more" element={<More />} />
         <Route path="/forgot-password" element={<RecoverPassword />} />
+
+        <Route path="/earn" element={<PrivateRoute element={<Earn />} />} />
+        <Route path="/splash" element={<PrivateRoute element={<ShareButton />} />} />
+        <Route path="/deposit" element={<PrivateRoute element={<Deposit />} />} />
+        <Route path="/withdraw" element={<PrivateRoute element={<Withdraw />} />} />
+        <Route path="/settings" element={<PrivateRoute element={<Settings />} />} />
+        <Route path="/history" element={<PrivateRoute element={<History />} />} />
+        <Route path="/more" element={<PrivateRoute element={<More />} />} />
+
+        {/* Logout route */}
+        <Route path="/logout" element={<Logout />} />
+
+        {/* Catch-all route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
-      {['/login', '/signup'].includes(location.pathname) ? '' : <Footer />}
+
+       {!['/login', '/signup'].includes(location.pathname) && <Footer />}
     </>
   );
 };

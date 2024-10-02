@@ -23,7 +23,7 @@ const BankingHomeScreen = () => {
                         </div>
                         <span className="text-xs">Link</span>
                     </button>
-                    {['Ali', 'Steve', 'Ahmed', 'Alex', 'Steve', 'Ahmed', 'Alex'].map((name) => (
+                    {['Ali', 'Steve', 'Ahmed', 'Alexie', 'Steveie', 'Ahmedie', 'Alex'].map((name) => (
                         <button key={name} className="flex flex-col items-center">
                             <div className="w-12 h-12 rounded-full overflow-hidden mb-1">
                                 <img
