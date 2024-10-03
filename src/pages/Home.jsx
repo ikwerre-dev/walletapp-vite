@@ -1,22 +1,27 @@
 import React from 'react';
-import { Settings, ArrowUp, ArrowDown, RefreshCw, Home, Clock, CreditCard, MoreHorizontal, Link2, Plus } from 'lucide-react';
+import { Link2 } from 'lucide-react';
 import user from '../assets/user.png';
-import cardBg from '../assets/card-bg.png';
-import { Link } from 'react-router-dom';
 import TransactionHistory from '../components/TransactionHistory';
 import BalanceCard from '../components/BalanceCard';
 import Header from '../components/Header';
+import useUserData from '../components/Data.jsx'; // Import the custom hook
 
 const BankingHomeScreen = () => {
+    const { userData, loading } = useUserData(); // Access the user data and loading state
+
+    if (loading) {
+        return <div className="flex justify-center items-center h-screen text-white">Loading...</div>; // Display loading state
+    }
+
     return (
-        <div className="flex flex-col h-screen mb-[5rem] bg-[#270685] text-white ">
+        <div className="flex flex-col h-screen mb-[5rem] bg-[#270685] text-white">
             <Header />
             <div className="px-1">
-                <BalanceCard type={1} />
+                <BalanceCard amount={userData.balance} type={1} />
             </div>
             <div className="bg-white text-black px-6 p-4 rounded-t-3xl mt-4 flex-grow">
                 <h3 className="font-bold mb-4">Recent Referrals</h3>
-                <div className="flex space-x-4 overflow-scroll mb-6">
+                <div className="flex space-x-4 overflow-x-scroll mb-6">
                     <button className="flex sticky left-0 bg-white pr-2 rounded-lg flex-col items-center">
                         <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-1">
                             <span className="text-2xl text-indigo-600"><Link2 /></span>
@@ -37,11 +42,9 @@ const BankingHomeScreen = () => {
                     ))}
                 </div>
 
-
+           
                 <TransactionHistory />
             </div>
-
-
         </div>
     );
 };

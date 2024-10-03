@@ -8,12 +8,16 @@ import { Share2 } from 'lucide-react';
 const shareLinks = [
     { title: 'Share The Link', url: 'https://www.facebook.com/sharer/sharer.php?u=' },
 ];
+import useUserData from '../components/Data.jsx'; // Import the custom hook
 
 const Earn = ({ maxShares = 20 }) => {
+    const { userData, loading } = useUserData(); // Access the user data and loading state
     const [progress, setProgress] = useState(0);
     const [showClaimButton, setShowClaimButton] = useState(false);
     const [claimed, setClaimed] = useState(false);
-
+    if (loading) {
+        return <div className="flex justify-center items-center h-screen text-white">Loading...</div>; // Display loading state
+    }
     const handleShare = async () => {
         if (navigator.share) {
             try {
@@ -50,7 +54,7 @@ const Earn = ({ maxShares = 20 }) => {
     }; return (
         <div className="flex flex-col h-screen mb-[5rem] bg-[#270685] text-white">
 
-            <BalanceCard type={2} />
+            <BalanceCard amount={userData.balance} type={2} />
 
             <div className="bg-white text-black p-4 px-6 rounded-t-3xl mt-4 flex-grow">
                 <h3 className="font-bold mb-4">Earn</h3>
