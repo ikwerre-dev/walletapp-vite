@@ -337,7 +337,7 @@ function App() {
     return (
         <div className="flex flex-col h-screen mb-[5rem] bg-[#270685] text-white">
 
-            {!isKeypadModalOpen ? <BalanceCard amount={userData.balance} type={2} /> : ''}
+            {!isKeypadModalOpen ? <BalanceCard amount={userData ? userData.balance : 0} type={2} /> : ''}
 
             <div className="bg-white text-black p-4 px-6 rounded-t-3xl mt-4 flex-grow">
                 <h3 className="font-bold mb-4">Deposit</h3>

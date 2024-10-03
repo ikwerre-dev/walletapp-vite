@@ -72,7 +72,7 @@ const History = () => {
           <h3 className="font-bold">Latest Transactions</h3>
           <Link to={'/history'} className="text-indigo-600 text-sm">View all</Link>
         </div>
-        {UserTransactions.map((transaction, index) => (
+        {UserTransactions && UserTransactions.map((transaction, index) => (
           <div key={index} className="flex items-center justify-between py-2" onClick={() => setSelectedTransaction(transaction)}>
             <div className="flex items-center">
               <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">

@@ -17,7 +17,7 @@ const BankingHomeScreen = () => {
         <div className="flex flex-col h-screen mb-[5rem] bg-[#270685] text-white">
             <Header />
             <div className="px-1">
-                <BalanceCard amount={userData.balance} type={1} />
+                <BalanceCard  amount={userData ? userData.balance : 0}  type={1} />
             </div>
             <div className="bg-white text-black px-6 p-4 rounded-t-3xl mt-4 flex-grow">
                 <h3 className="font-bold mb-4">Recent Referrals</h3>
