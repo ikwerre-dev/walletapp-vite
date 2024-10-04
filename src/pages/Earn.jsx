@@ -1,34 +1,77 @@
-import React, { useState } from 'react';
-import { Settings, ArrowUp, ArrowDown, RefreshCw, Home, Clock, CreditCard, MoreHorizontal, Link2, Plus, Info } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Settings, ArrowUp, ArrowDown, RefreshCw, Home, Clock, CreditCard, MoreHorizontal, Link2, Plus, Info, Share2 } from 'lucide-react';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 import user from '../assets/user.png';
-import cardBg from '../assets/card-bg.png';
 import BalanceCard from '../components/BalanceCard';
-import { Share2 } from 'lucide-react';
+import useUserData from '../components/Data.jsx';
 
 const shareLinks = [
     { title: 'Share The Link', url: 'https://www.facebook.com/sharer/sharer.php?u=' },
 ];
-import useUserData from '../components/Data.jsx'; // Import the custom hook
 
-const Earn = ({ maxShares = 20 }) => {
-    const { userData, loading } = useUserData(); // Access the user data and loading state
+const Earn = ({ maxShares = 1 }) => {
+    const { userData, loading, jwt } = useUserData();
     const [progress, setProgress] = useState(0);
     const [showClaimButton, setShowClaimButton] = useState(false);
     const [claimed, setClaimed] = useState(false);
-    if (loading) {
-        return <div className="flex justify-center items-center h-screen text-white">Loading...</div>; // Display loading state
-    }
+    const [depositStatus, setDepositStatus] = useState(null);
+    const [nextWithdrawalDate, setNextWithdrawalDate] = useState(null);
+    const [withdrawalAmount, setWithdrawalAmount] = useState(null);
+    const [depositDay, setDepositDay] = useState(null);
+    const [withdrawalMethod, setWithdrawalMethod] = useState('');
+    const [withdrawalMethodText, setWithdrawalMethodText] = useState('');
+
+    useEffect(() => {
+        if (jwt) {
+            const fetchData = async () => {
+                try {
+                    const response = await axios.post(
+                        `${import.meta.env.VITE_API_BASE_URL}getLastDeposit`,
+                        {},
+                        {
+                            headers: {
+                                Authorization: `Bearer ${jwt}`,
+                            },
+                        }
+                    );
+                    setDepositStatus(response.data);
+                    setNextWithdrawalDate(response.data.time_left);
+                    setWithdrawalAmount(
+                        ((parseInt(response.data.data.task_day) * 0.2 * parseInt(response.data.data.amount)) + parseInt(response.data.data.amount)).toLocaleString()
+                    );
+                    setDepositDay(response.data.data.task_day);
+                    const packageName = response.data.data.package_name;
+
+                    if (packageName === 'Lite' || packageName === 'Standard') {
+                        setWithdrawalMethod('Bitcoin');
+                        setWithdrawalMethodText('Enter your Bitcoin wallet address');
+                    } else if (packageName === 'Gold' || packageName === 'Emerald') {
+                        setWithdrawalMethod('Bank direct deposit');
+                        setWithdrawalMethodText('Enter your bank account details');
+                    } else {
+                        setWithdrawalMethod('Cashapp');
+                        setWithdrawalMethodText('Enter your Cashapp username');
+                    }
+                } catch (error) {
+                    console.error('Error fetching user details:', error);
+                }
+            };
+
+            fetchData();
+        }
+    }, [jwt]);
+
     const handleShare = async () => {
         if (navigator.share) {
             try {
                 await navigator.share({
                     title: 'Get paid just by sharing post on Facebook!',
-                    text: 'Check out this amazing site, I did it and it’s working! I got paid to Cash App, click the link and try it.',
+                    text: 'Check out this amazing site, I did it and its working! I got paid to Cash App, click the link and try it.',
                     url: window.location.href,
                 });
                 console.log('Share dialog opened successfully');
 
-                // Update the share progress immediately after the share dialog is opened
                 if (progress < maxShares) {
                     const newProgress = progress + 1;
                     setProgress(newProgress);
@@ -38,6 +81,7 @@ const Earn = ({ maxShares = 20 }) => {
                 }
             } catch (error) {
                 console.error('Error sharing:', error);
+                toast.error('Share not valid');
             }
         } else {
             alert('Web Share API is not supported in your browser.');
@@ -51,7 +95,13 @@ const Earn = ({ maxShares = 20 }) => {
             setShowClaimButton(false);
             setClaimed(false);
         }, 3000);
-    }; return (
+    };
+
+    if (loading) {
+        return <div className="flex justify-center items-center h-screen text-white">Loading...</div>;
+    }
+
+    return (
         <div className="flex flex-col h-screen mb-[5rem] bg-[#270685] text-white">
 
             <BalanceCard amount={userData.balance} type={2} />

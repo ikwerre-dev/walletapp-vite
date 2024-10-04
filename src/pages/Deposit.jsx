@@ -43,7 +43,9 @@ function App() {
     const [IntiatePaymentModal, setIntiatePaymentModal] = useState(false);
     const [proof, setProof] = useState(""); // To hold the base64 encoded image
     const { userData, loading, jwt } = useUserData(); // Access the user data and loading state
-
+    const [SubmitButtonText, setSubmitButtonText] = useState('I have Paid'); // State for withdrawal response
+    const [SubmitButtonDisabled, setSubmitButtonDisabled] = useState(false); // State for withdrawal response
+ 
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
@@ -59,7 +61,8 @@ function App() {
     const openIntiatePaymentModal = async (e) => {
 
         // e.preventDefault();
-
+        setSubmitButtonText('Loading...')
+        setSubmitButtonDisabled(true)
         try {
             const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}deposit`, {
                 package: selectedPackage,
@@ -76,9 +79,15 @@ function App() {
             console.log(response.data)
 
             if (response.data.status === 1) {
+                setSubmitButtonText('I have Paid')
+                setSubmitButtonDisabled(false)
+
                 toast.success(response.data.message);
                 setIntiatePaymentModal(true)
             } else {
+                setSubmitButtonText('I have Paid')
+                setSubmitButtonDisabled(false)
+
                 toast.error(response.data.message);
             }
 
@@ -349,52 +358,63 @@ function App() {
                                     <h1>{DepositStatus.message}</h1>
                                     <p className='text-sm mt-3'>Time till next deposit: {DepositStatus.time_left}</p>
                                 </div>
-                            </> : <>
+                            </> :
 
-
-
-                                <div className="relative p-2 h-[40rem]">
-                                    <h2 className="text-sm font-semibold mb-2">Select Package{' '} <span className="text-blue-500">*</span></h2>
-
-                                    <div
-                                        className="bg-gray-100 rounded-lg p-4 mb-5 flex items-center justify-between cursor-pointer"
-                                        onClick={openPackageModal}
-                                    >
-                                        <div className="flex items-center">
-
-                                            <span className=" text-xs font-semibold">{selectedPackage.name} (Min ${selectedPackage.min.toLocaleString(undefined, { maximumFractionDigits: 2 })} - Max ${selectedPackage.max.toLocaleString(undefined, { maximumFractionDigits: 2 })})</span>
+                            {
+                                ...DepositStatus.data && DepositStatus.data.is_withdrawn == 0 && DepositStatus.data.task_day == 4 ?
+                                    <>
+                                        <div className='bg-indigo-500 p-5 rounded-2xl text-white w-full'>
+                                             <p className='text-sm pb-3'>Please process your current withdrawal to be eligible to deposit</p>
+                                                <Link to='/withdraw' className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-900 mt-3 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Withdraw</Link>
+                                                
                                         </div>
-                                        <ChevronRight className="text-gray-400" />
-                                    </div>
+                                    </> : <>
 
 
-                                    <h2 className="text-sm font-semibold mb-2">Select Deposit Method{' '} <span className="text-blue-500">*</span></h2>
 
-                                    <div
-                                        className="bg-gray-100 rounded-lg p-4 mb-5 flex items-center justify-between cursor-pointer"
-                                        onClick={openModal}
-                                    >
-                                        <div className="flex items-center">
-                                            <div className={`${selectedCrypto.color} text-white text-sm rounded-full w-6 h-6 flex items-center justify-center mr-3`}>
-                                                {selectedCrypto.symbol[0]}
+
+                                        <div className="relative p-2 h-[40rem]">
+                                            <h2 className="text-sm font-semibold mb-2">Select Package{' '} <span className="text-blue-500">*</span></h2>
+
+                                            <div
+                                                className="bg-gray-100 rounded-lg p-4 mb-5 flex items-center justify-between cursor-pointer"
+                                                onClick={openPackageModal}
+                                            >
+                                                <div className="flex items-center">
+
+                                                    <span className=" text-xs font-semibold">{selectedPackage.name} (Min ${selectedPackage.min.toLocaleString(undefined, { maximumFractionDigits: 2 })} - Max ${selectedPackage.max.toLocaleString(undefined, { maximumFractionDigits: 2 })})</span>
+                                                </div>
+                                                <ChevronRight className="text-gray-400" />
                                             </div>
-                                            <span className=" text-xs font-semibold">{selectedCrypto.name} ({selectedCrypto.symbol})</span>
-                                        </div>
-                                        <ChevronRight className="text-gray-400" />
-                                    </div>
 
-                                    <h2 className="text-sm font-semibold mb-2"> Amount{' '} <span className="text-blue-500">*</span></h2>
 
-                                    <div className="bg-gray-100 rounded-lg p-4 mb-4 flex items-center justify-between">
-                                        <input
-                                            type="text"
-                                            value={'$' + (amount || '0.00')}
-                                            onClick={openKeypadModal}
-                                            readOnly={true}
-                                            onChange={(e) => setAmount(e.target.value)}
-                                            className="bg-transparent text-xs font-semibold w-full outline-none"
-                                        />
-                                        {/* <div className="flex items-center">
+                                            <h2 className="text-sm font-semibold mb-2">Select Deposit Method{' '} <span className="text-blue-500">*</span></h2>
+
+                                            <div
+                                                className="bg-gray-100 rounded-lg p-4 mb-5 flex items-center justify-between cursor-pointer"
+                                                onClick={openModal}
+                                            >
+                                                <div className="flex items-center">
+                                                    <div className={`${selectedCrypto.color} text-white text-sm rounded-full w-6 h-6 flex items-center justify-center mr-3`}>
+                                                        {selectedCrypto.symbol[0]}
+                                                    </div>
+                                                    <span className=" text-xs font-semibold">{selectedCrypto.name} ({selectedCrypto.symbol})</span>
+                                                </div>
+                                                <ChevronRight className="text-gray-400" />
+                                            </div>
+
+                                            <h2 className="text-sm font-semibold mb-2"> Amount{' '} <span className="text-blue-500">*</span></h2>
+
+                                            <div className="bg-gray-100 rounded-lg p-4 mb-4 flex items-center justify-between">
+                                                <input
+                                                    type="text"
+                                                    value={'$' + (amount || '0.00')}
+                                                    onClick={openKeypadModal}
+                                                    readOnly={true}
+                                                    onChange={(e) => setAmount(e.target.value)}
+                                                    className="bg-transparent text-xs font-semibold w-full outline-none"
+                                                />
+                                                {/* <div className="flex items-center">
                                 <button
                                     onClick={openCurrencyModal}
                                     className="flex items-center text-blue-500"
@@ -403,182 +423,184 @@ function App() {
                                     <ChevronRight className="text-gray-400" />
                                 </button>
                             </div> */}
-                                    </div>
-
-
-
-                                    <button onClick={getquote} className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold">
-                                        Deposit
-                                    </button>
-
-                                    {/* Crypto Modal */}
-                                    <div className={`absolute inset-0 bg-white transform transition-transform z-50 duration-300 ease-in-out ${isModalOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-                                        <div className="p-4 h-full overflow-y-auto">
-                                            <div className="flex justify-between items-center mb-4">
-                                                <h3 className="text-xl font-bold">Select Payment Method</h3>
-                                                <button onClick={closeModal} className="text-gray-500 hover:text-gray-700">
-                                                    <X size={24} />
-                                                </button>
                                             </div>
-                                            <div className="space-y-2">
-                                                {cryptos.map((crypto) => (
-                                                    <div
-                                                        key={crypto.symbol}
-                                                        className="p-3 rounded-lg hover:bg-gray-100 cursor-pointer flex items-center"
-                                                        onClick={() => selectCrypto(crypto)}
-                                                    >
-                                                        <div className={`${crypto.color} text-white rounded-full w-8 h-8 flex items-center justify-center mr-3`}>
-                                                            {crypto.symbol[0]}
-                                                        </div>
-                                                        <span>{crypto.name} ({crypto.symbol})</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
 
-                                    <div className={`absolute inset-0 bg-white transform transition-transform z-50 duration-300 ease-in-out ${isPackageModalOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-                                        <div className="p-4 h-full overflow-y-auto">
-                                            <div className="flex justify-between items-center mb-4">
-                                                <h3 className="text-xl font-bold">Select Package</h3>
-                                                <button onClick={closePackageModal} className="text-gray-500 hover:text-gray-700">
-                                                    <X size={24} />
-                                                </button>
-                                            </div>
-                                            <div className="space-y-2">
-                                                {packages.map((packages) => (
-                                                    <div
-                                                        key={packages.name}
-                                                        className="p-3 rounded-lg hover:bg-gray-100 cursor-pointer flex items-center"
-                                                        onClick={() => selectPackage(packages)}
-                                                    >
-                                                        <div className={`${packages.color} text-white rounded-full w-8 h-8 flex items-center justify-center mr-3`}>
-                                                            {packages.name[0]}
-                                                        </div>
-                                                        <span className='text-sm'> {packages.name} (${packages.min.toLocaleString(undefined, { maximumFractionDigits: 2 })} - ${packages.max.toLocaleString(undefined, { maximumFractionDigits: 2 })})</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
 
-                                    <div className={`absolute inset-0 bg-white transform transition-transform z-50 duration-300 ease-in-out ${isPaymentMethodModalOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-                                        <div className="p-4 h-full overflow-y-auto">
-                                            <div className="flex justify-between items-center mb-4">
-                                                <h3 className="text-xl font-bold">Make Deposit</h3>
-                                                <button onClick={closePaymentMethodModal} className="text-gray-500 hover:text-gray-700">
-                                                    <X size={24} />
-                                                </button>
-                                            </div>
-                                            <div className="space-y-2 mt-[2rem]">
-                                                <PaymentMethod
-                                                    key={selectedCrypto.name}
-                                                    name={selectedCrypto.name}
-                                                    qr={selectedCrypto.qr}
-                                                    data={selectedCrypto.data}
-                                                    instruction={selectedCrypto.instruction}
-                                                    providers={selectedCrypto.name}
-                                                    isSelected={selectedMethod === selectedCrypto.name}
-                                                    onClick={() => setSelectedMethod(selectedCrypto.name)}
-                                                />
 
-                                            </div>
-                                            <button
-                                                className="w-full bg-blue-600 text-white py-3 mt-3 rounded-lg font-semibold"
-                                                onClick={() => openIntiatePaymentModal()}
-                                            >
-                                                I have Paid
+                                            <button onClick={getquote} className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold">
+                                                Deposit
                                             </button>
-                                        </div>
-                                    </div>
 
-                                    {/* Bank Detaills Modal */}
-                                    <div className={`absolute inset-0 bg-white transform transition-transform z-50 duration-300 ease-in-out ${IntiatePaymentModal ? 'translate-x-0' : 'translate-x-full'}`}>
-                                        <div className="p-4 h-full overflow-y-auto">
-                                            <div className="flex justify-between items-center mb-4">
-                                                <h3 className="text-xl font-bold">{selectedCrypto.name} Payment</h3>
-                                                <button onClick={closeIntiatePaymentModal} className="text-gray-500 hover:text-gray-700">
-                                                    <X size={24} />
-                                                </button>
+                                            {/* Crypto Modal */}
+                                            <div className={`absolute inset-0 bg-white transform transition-transform z-50 duration-300 ease-in-out ${isModalOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+                                                <div className="p-4 h-full overflow-y-auto">
+                                                    <div className="flex justify-between items-center mb-4">
+                                                        <h3 className="text-xl font-bold">Select Payment Method</h3>
+                                                        <button onClick={closeModal} className="text-gray-500 hover:text-gray-700">
+                                                            <X size={24} />
+                                                        </button>
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        {cryptos.map((crypto) => (
+                                                            <div
+                                                                key={crypto.symbol}
+                                                                className="p-3 rounded-lg hover:bg-gray-100 cursor-pointer flex items-center"
+                                                                onClick={() => selectCrypto(crypto)}
+                                                            >
+                                                                <div className={`${crypto.color} text-white rounded-full w-8 h-8 flex items-center justify-center mr-3`}>
+                                                                    {crypto.symbol[0]}
+                                                                </div>
+                                                                <span>{crypto.name} ({crypto.symbol})</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className="space-y-2 mt-[2rem]">
-                                                <p>Your Deposit is being processed, Please await confirmation</p>
-                                            </div>
-                                            <Link
-                                                to="/"
 
-                                            >
-                                                <button
-                                                    className="w-full bg-blue-600 text-white py-3 mt-3 rounded-lg font-semibold"
-                                                >
-                                                    Continue
-                                                </button>
-                                            </Link>
-                                        </div>
-                                    </div>
+                                            <div className={`absolute inset-0 bg-white transform transition-transform z-50 duration-300 ease-in-out ${isPackageModalOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+                                                <div className="p-4 h-full overflow-y-auto">
+                                                    <div className="flex justify-between items-center mb-4">
+                                                        <h3 className="text-xl font-bold">Select Package</h3>
+                                                        <button onClick={closePackageModal} className="text-gray-500 hover:text-gray-700">
+                                                            <X size={24} />
+                                                        </button>
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        {packages.map((packages) => (
+                                                            <div
+                                                                key={packages.name}
+                                                                className="p-3 rounded-lg hover:bg-gray-100 cursor-pointer flex items-center"
+                                                                onClick={() => selectPackage(packages)}
+                                                            >
+                                                                <div className={`${packages.color} text-white rounded-full w-8 h-8 flex items-center justify-center mr-3`}>
+                                                                    {packages.name[0]}
+                                                                </div>
+                                                                <span className='text-sm'> {packages.name} (${packages.min.toLocaleString(undefined, { maximumFractionDigits: 2 })} - ${packages.max.toLocaleString(undefined, { maximumFractionDigits: 2 })})</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                                    {/* Keypad Modal */}
-                                    <div className={`absolute inset-0 bg-white transform transition-transform duration-300 z-50 h-[100%] ease-in-out ${isKeypadModalOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-                                        <div className="p-4 h-full overflow-y-auto">
-                                            <div className="flex items-center mb-6">
-                                                <ChevronLeft className="mr-2 cursor-pointer" onClick={closeKeypadModal} />
-                                                <h2 className="text-xl font-semibold">Enter Amount</h2>
-                                            </div>
-                                            <div className="text-center mb-6">
-                                                <div className="text-4xl font-bold mb-1">${amount || '0.00'}</div>
-                                                <div className="text-gray-500">Amount</div>
-                                            </div>
-                                            <div className="flex justify-end mb-6">
-                                                <button onClick={openPackageModal} className={`${selectedPackage.color} bg-blue-100 text-white px-3 py-1 rounded-full flex items-center`}>
-                                                    {selectedPackage.name} (Min ${selectedPackage.min.toLocaleString(undefined, { maximumFractionDigits: 2 })} - Max ${selectedPackage.max.toLocaleString(undefined, { maximumFractionDigits: 2 })})
-                                                </button>
-                                            </div>
-                                            <div className="grid grid-cols-3 gap-4 mb-6">
-                                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0, 'backspace'].map((key) => (
+                                            <div className={`absolute inset-0 bg-white transform transition-transform z-50 duration-300 ease-in-out ${isPaymentMethodModalOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+                                                <div className="p-4 h-full overflow-y-auto">
+                                                    <div className="flex justify-between items-center mb-4">
+                                                        <h3 className="text-xl font-bold">Make Deposit</h3>
+                                                        <button onClick={closePaymentMethodModal} className="text-gray-500 hover:text-gray-700">
+                                                            <X size={24} />
+                                                        </button>
+                                                    </div>
+                                                    <div className="space-y-2 mt-[2rem]">
+                                                        <PaymentMethod
+                                                            key={selectedCrypto.name}
+                                                            name={selectedCrypto.name}
+                                                            qr={selectedCrypto.qr}
+                                                            data={selectedCrypto.data}
+                                                            instruction={selectedCrypto.instruction}
+                                                            providers={selectedCrypto.name}
+                                                            isSelected={selectedMethod === selectedCrypto.name}
+                                                            onClick={() => setSelectedMethod(selectedCrypto.name)}
+                                                        />
+
+                                                    </div>
                                                     <button
-                                                        key={key}
-                                                        className="bg-gray-100 rounded-lg p-4 text-center text-xl font-semibold"
-                                                        onClick={() => handleKeyPress(key.toString())}
+                                                        className="w-full bg-blue-600 text-white py-3 mt-3 rounded-lg font-semibold"
+                                                        onClick={() => openIntiatePaymentModal()}
+                                                        disabled={SubmitButtonDisabled}
                                                     >
-                                                        {key === 'backspace' ? '⌫' : key}
+                                                        {SubmitButtonText}
                                                     </button>
-                                                ))}
+                                                </div>
                                             </div>
-                                            <button
-                                                className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold"
-                                                onClick={() => CompleteKeypad(amount)}
-                                            >
-                                                Continue
-                                            </button>
-                                        </div>
-                                    </div>
 
-                                    <div className={`absolute inset-0 bg-white transform transition-transform duration-300 z-40 h-[100%] ease-in-out ${isCurrencyModalOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-                                        <div className="p-4 h-full overflow-y-auto">
-                                            <div className="flex items-center mb-6">
-                                                <ChevronLeft className="mr-2 cursor-pointer" onClick={closeCurrencyModal} />
-                                                <h2 className="text-xl font-semibold">Select Currency</h2>
-                                            </div>
-                                            <div className="space-y-2">
-                                                {['USD', 'EUR', 'GBP', 'JPY'].map((currency) => (
-                                                    <div
-                                                        key={currency}
-                                                        className="p-3 rounded-lg hover:bg-gray-100 cursor-pointer flex items-center"
-                                                        onClick={() => {
-                                                            setSelectedCurrency(currency);
-                                                            closeCurrencyModal();
-                                                        }}
-                                                    >
-                                                        <span className="font-semibold">{currency}</span>
+                                            {/* Bank Detaills Modal */}
+                                            <div className={`absolute inset-0 bg-white transform transition-transform z-50 duration-300 ease-in-out ${IntiatePaymentModal ? 'translate-x-0' : 'translate-x-full'}`}>
+                                                <div className="p-4 h-full overflow-y-auto">
+                                                    <div className="flex justify-between items-center mb-4">
+                                                        <h3 className="text-xl font-bold">{selectedCrypto.name} Payment</h3>
+                                                        <button onClick={closeIntiatePaymentModal} className="text-gray-500 hover:text-gray-700">
+                                                            <X size={24} />
+                                                        </button>
                                                     </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
+                                                    <div className="space-y-2 mt-[2rem]">
+                                                        <p>Your Deposit is being processed, Please await confirmation</p>
+                                                    </div>
+                                                    <Link
+                                                        to="/"
 
-                                </div>
-                            </>
-                    }
+                                                    >
+                                                        <button
+                                                            className="w-full bg-blue-600 text-white py-3 mt-3 rounded-lg font-semibold"
+                                                        >
+                                                            Continue
+                                                        </button>
+                                                    </Link>
+                                                </div>
+                                            </div>
+
+                                            {/* Keypad Modal */}
+                                            <div className={`absolute inset-0 bg-white transform transition-transform duration-300 z-50 h-[100%] ease-in-out ${isKeypadModalOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+                                                <div className="p-4 h-full overflow-y-auto">
+                                                    <div className="flex items-center mb-6">
+                                                        <ChevronLeft className="mr-2 cursor-pointer" onClick={closeKeypadModal} />
+                                                        <h2 className="text-xl font-semibold">Enter Amount</h2>
+                                                    </div>
+                                                    <div className="text-center mb-6">
+                                                        <div className="text-4xl font-bold mb-1">${amount || '0.00'}</div>
+                                                        <div className="text-gray-500">Amount</div>
+                                                    </div>
+                                                    <div className="flex justify-end mb-6">
+                                                        <button onClick={openPackageModal} className={`${selectedPackage.color} bg-blue-100 text-white px-3 py-1 rounded-full flex items-center`}>
+                                                            {selectedPackage.name} (Min ${selectedPackage.min.toLocaleString(undefined, { maximumFractionDigits: 2 })} - Max ${selectedPackage.max.toLocaleString(undefined, { maximumFractionDigits: 2 })})
+                                                        </button>
+                                                    </div>
+                                                    <div className="grid grid-cols-3 gap-4 mb-6">
+                                                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0, 'backspace'].map((key) => (
+                                                            <button
+                                                                key={key}
+                                                                className="bg-gray-100 rounded-lg p-4 text-center text-xl font-semibold"
+                                                                onClick={() => handleKeyPress(key.toString())}
+                                                            >
+                                                                {key === 'backspace' ? '⌫' : key}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                    <button
+                                                        className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold"
+                                                        onClick={() => CompleteKeypad(amount)}
+                                                    >
+                                                        Continue
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div className={`absolute inset-0 bg-white transform transition-transform duration-300 z-40 h-[100%] ease-in-out ${isCurrencyModalOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+                                                <div className="p-4 h-full overflow-y-auto">
+                                                    <div className="flex items-center mb-6">
+                                                        <ChevronLeft className="mr-2 cursor-pointer" onClick={closeCurrencyModal} />
+                                                        <h2 className="text-xl font-semibold">Select Currency</h2>
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        {['USD', 'EUR', 'GBP', 'JPY'].map((currency) => (
+                                                            <div
+                                                                key={currency}
+                                                                className="p-3 rounded-lg hover:bg-gray-100 cursor-pointer flex items-center"
+                                                                onClick={() => {
+                                                                    setSelectedCurrency(currency);
+                                                                    closeCurrencyModal();
+                                                                }}
+                                                            >
+                                                                <span className="font-semibold">{currency}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </>
+
+                            }}
                 </div>
             </div>
         </div>

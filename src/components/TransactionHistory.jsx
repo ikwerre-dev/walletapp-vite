@@ -79,13 +79,13 @@ const History = () => {
                 <span className="text-lg">{transaction.type == 1 ? <Plus  size={20}/> : <ArrowDown  size={20}/> }</span>
               </div>
               <div>
-                <p className="font-semibold text-sm">{transaction.type == 1 ? 'Deposit for ' + transaction.package_name : 'Withdrawal'}</p>
-                <p className="text-xs text-gray-500">{transaction.status == 0 ? 'Pending' : transaction.status == 1 ? 'Successful' : 'Failed'}</p>
+                <p className="font-semibold text-sm">{transaction.type == 1 ? 'Deposit' : 'Withdrawal'}</p>
+                <p className={`text-xs  ${transaction.status == 0 ? 'text-orange-500' : transaction.status == 1 ? 'text-green-500' : 'text-red-500'} `}>{transaction.status == 0 ? 'Pending' : transaction.status == 1 ? 'Successful' : 'Failed'}</p>
               </div>
             </div>
             <div className="flex items-center">
               <span className={`font-semibold ${transaction.type == 1 ? 'text-green-500' : 'text-red-500'}`}>
-                {transaction.type == 1 ? '+' : '-'}${Math.abs(transaction.amount).toFixed(2)}
+              {transaction.type === 1 ? '+' : '-'}${Math.abs(transaction.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
               <ArrowUp className="w-4 h-4 ml-2 transform rotate-45" />
             </div>

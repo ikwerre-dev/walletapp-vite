@@ -37,6 +37,11 @@ const useUserData = () => {
         }
     }, []);
 
+
+    
+
+
+
     return { userData, loading, jwt, UserTransactions };  // Return both userData and loading state
 };
 
