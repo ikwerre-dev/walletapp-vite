@@ -30,7 +30,7 @@ const Header = () => {
                     );
                     setUserData(response.data.data)
                     setLoading(false)
-                    // console.log(response.data.data)
+                    console.log(response.data)
 
 
 

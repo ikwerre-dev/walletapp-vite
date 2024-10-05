@@ -9,7 +9,7 @@ import axios from 'axios';
 const BalanceCard = ({ type, amount = 0 }) => {
     const { userData, loading, jwt } = useUserData(); // Access the user data and loading state
     const [DepositStatus, setDepositStatus] = useState('');
-   
+
     const [WithdrawalAmount, setWithdrawalAmount] = useState(0);
     useEffect(() => {
 
@@ -25,11 +25,24 @@ const BalanceCard = ({ type, amount = 0 }) => {
                             },
                         }
                     );
-                    setWithdrawalAmount(
-                        response.data && response.data.data.is_withdrawn == 1 ? 0 : ((parseInt(response.data.data.task_day) * 0.2 * parseInt(response.data.data.amount)) + parseInt(response.data.data.amount))
-                    );
+                    if (response.data && response.data.data) {
+                        const { is_withdrawn, status, task_day, amount } = response.data.data;
+
+                        // Check if status is not 0
+                        if (status !== 0) {
+                            // Calculate the withdrawal amount based on task_day and amount
+                            const calculatedAmount = (parseInt(task_day) * 0.2 * parseInt(amount)) + parseInt(amount);
+
+                            // If is_withdrawn is 1 and status is 0, set the withdrawal amount to 0
+                            setWithdrawalAmount(is_withdrawn === 1 ? 0 : calculatedAmount);
+                        } else {
+                            // If status is 0, set withdrawal amount to 0
+                            setWithdrawalAmount(0);
+                        }
+                    }
+
                     setDepositStatus(response.data);  // Set user data
-                 } catch (error) {
+                } catch (error) {
                     console.error('Error fetching user details:', error);
                 }
             };
@@ -47,7 +60,7 @@ const BalanceCard = ({ type, amount = 0 }) => {
             style={{ backgroundImage: `url(${cardBg})`, backgroundPosition: 'center' }}
         >        <p className="text-center text-xs text-gray-300 opacity-80 mb-2">Main balance</p>
             <h2 className="text-center text-3xl font-bold mb-4">${WithdrawalAmount.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2, })}</h2>
-             {type == 1 ?
+            {type == 1 ?
                 <div className="flex justify-around">
                     <Link to='/deposit' className="flex flex-col items-center">
                         <div className=" p-2 rounded-full ">
