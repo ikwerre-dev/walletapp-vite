@@ -22,7 +22,7 @@ const Login = () => {
                                 <Eye className="h-5 w-5 text-gray-400" />
                             </div>
                         </div>
-                    </div>
+                    </div> 
                     <div className="mt-6 text-right">
                         <p className="text-sm text-gray-500">Forgot Password? <Link to="/forgot-password" className='text-indigo-700'>Recover Account</Link></p>
 
