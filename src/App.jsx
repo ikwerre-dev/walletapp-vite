@@ -15,10 +15,10 @@ import ShareButton from './pages/Splash';
 import Withdraw from './pages/Withdraw';
 import Settings from './pages/Settings';
 import Logout from './pages/Logout';
-const jwt = Cookies.get('jwt'); // Check if JWT exists
+// const jwt = Cookies.get('jwt'); // Check if JWT exists
 
 const PrivateRoute = ({ element }) => {
-  // const jwt = Cookies.get('jwt'); // Check if JWT exists
+  const jwt = Cookies.get('jwt'); // Check if JWT exists
   console.log(jwt)
   return jwt ? element : <Navigate to="/login" replace />;
 };
