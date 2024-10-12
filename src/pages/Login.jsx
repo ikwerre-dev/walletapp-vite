@@ -37,7 +37,7 @@ const LoginForm = () => {
                 toast.success(response.data.message);
                 Cookies.set('jwt', response.data.jwt);
                 Cookies.set('refresh_token', response.data.refresh_token);
-                // navigate('/dashboard');
+                navigate('/dashboard');
             } else {
                 toast.error(response.data.message);
             }
