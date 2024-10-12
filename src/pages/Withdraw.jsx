@@ -32,6 +32,8 @@ const Withdraw = () => {
                             },
                         }
                     );
+                    // alert(response.data.data);
+                    if(response.data.data != null){
                     setDepositStatus(response.data);
                     setNextWithdrawalDate(response.data.time_left);
                     setWithdrawalAmount(
@@ -51,6 +53,9 @@ const Withdraw = () => {
                         setWithdrawalMethod('Cashapp');
                         setWithdrawalMethodText('Enter your Cashapp username');
                     }
+                }else{
+
+                }
                 } catch (error) {
                     console.error('Error fetching user details:', error);
                 }
@@ -80,7 +85,7 @@ const Withdraw = () => {
                     }
                 );
                 setWithdrawalResponse(response.data);
-                console.log(response.data)
+                // console.log(response.data)
                 if (response.data.status == 1) {
                     setSubmitButtonText('Withdraw')
                     setSubmitButtonDisabled(false)
@@ -144,6 +149,8 @@ const Withdraw = () => {
                             <h3 className="text-gray-600 text-xs">Withdrawal Amount</h3>
                             <h3 className="font-bold text-xs">${WithdrawalAmount}</h3>
                         </div>
+                        {WithdrawalAmount != 0 ? (
+                            <>
                         <hr className='my-3' />
                         <div className="flex flex-col justify-between gap-2 mb-2">
                             <h3 className="text-gray-600 text-xs">{WithdrawalMethodText}</h3>
@@ -155,7 +162,8 @@ const Withdraw = () => {
                                 onChange={(e) => setWithdrawalInput(e.target.value)}  // Update the state on input change
                             />
                         </div>
-
+                        </>
+                        ) : '' }
                         <button
                             className={`w-full px-4 py-2 mt-4 text-sm text-white  ${DepositStatus.is_withdrawable == 1 && SubmitButtonDisabled == false ? '' : 'opacity-50'}  bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
                             disabled={DepositStatus.is_withdrawable !== 1 || SubmitButtonDisabled}
@@ -168,7 +176,7 @@ const Withdraw = () => {
 
                 </div>
             </div>
-        </div>
+        </div> 
     );
 };
 

@@ -37,7 +37,7 @@ const Earn = ({ maxShares = 20 }) => {
         }
     }, []);
 
-    console.log(daysPassed)
+    // console.log(daysPassed)
     useEffect(() => {
         if (jwt) {
             fetchDepositData();
@@ -50,8 +50,8 @@ const Earn = ({ maxShares = 20 }) => {
             const today = new Date();
             const differenceInTime = today.getTime() - createdAt.getTime();
             const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
-            console.log('days_difference: ' + differenceInDays);
-            console.log('task day: ' + depositStatus.data.task_day);
+            // console.log('days_difference: ' + differenceInDays);
+            // console.log('task day: ' + depositStatus.data.task_day);
             setDaysPassed(differenceInDays);
             if (differenceInDays > depositStatus.data.task_day) {
                 setInvalidTask(true)
@@ -144,7 +144,7 @@ const Earn = ({ maxShares = 20 }) => {
                     },
                 }
             );
-            console.log(response.data)
+            // console.log(response.data)
             if (response.data.status == 1) {
                 setClaimed(true);
                 toast.success('Task completed successfully!');

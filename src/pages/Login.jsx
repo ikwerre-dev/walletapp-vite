@@ -31,13 +31,13 @@ const LoginForm = () => {
                 password: formData.password
             });
 
-            console.log(response.data);
+            // console.log(response.data);
 
             if (response.data.status === 1) {
                 toast.success(response.data.message);
                 Cookies.set('jwt', response.data.jwt);
                 Cookies.set('refresh_token', response.data.refresh_token);
-                navigate('/dashboard');
+                // navigate('/dashboard');
             } else {
                 toast.error(response.data.message);
             }
@@ -85,7 +85,7 @@ const LoginForm = () => {
                 </form>
 
                 <div className="mt-6 text-center">
-                    <p className="text-sm text-gray-500">Don't have an account? <Link to="/register" className="text-indigo-700">Create one</Link></p>
+                    <p className="text-sm text-gray-500">Don't have an account? <Link to="/signup" className="text-indigo-700">Create one</Link></p>
                 </div>
             </main>
         </div>

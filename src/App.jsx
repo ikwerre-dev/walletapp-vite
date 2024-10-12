@@ -19,10 +19,15 @@ import Logout from './pages/Logout';
 
 const PrivateRoute = ({ element }) => {
   const jwt = Cookies.get('jwt'); // Check if JWT exists
-  console.log(jwt)
+  // console.log(jwt)
   return jwt ? element : <Navigate to="/login" replace />;
 };
- 
+
+const PublicRoute = ({ element }) => {
+  const jwt = Cookies.get('jwt'); // Check if JWT exists
+  return jwt ? <Navigate to="/" replace /> : element;
+};
+
 
 const App = () => {
   const location = useLocation();
@@ -30,11 +35,12 @@ const App = () => {
   return (
     <>
       <Routes>
-        <Route path="/" element={<PrivateRoute element={ <Home />} />} />
-        <Route path="/dashboard" element={<PrivateRoute element={ <Home />} />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<RecoverPassword />} />
+        <Route path="/" element={<PrivateRoute element={<Home />} />} />
+        <Route path="/dashboard" element={<PrivateRoute element={<Home />} />} />
+        <Route path="/signup" element={<PublicRoute element={<Signup />} />} />
+        <Route path="/r/:data" element={<PublicRoute element={<Signup />} />} />
+        <Route path="/login" element={<PublicRoute element={<Login />} />} />
+        <Route path="/forgot-password" element={<PublicRoute element={<RecoverPassword />} />} />
 
         <Route path="/earn" element={<PrivateRoute element={<Earn />} />} />
         <Route path="/splash" element={<PrivateRoute element={<ShareButton />} />} />
@@ -51,7 +57,7 @@ const App = () => {
         <Route path="*" element={<NotFound />} />
       </Routes>
 
-       {!['/login', '/signup'].includes(location.pathname) && <Footer />}
+      {!['/login', '/signup'].includes(location.pathname) && <Footer />}
     </>
   );
 };

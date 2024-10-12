@@ -54,7 +54,7 @@ const History = () => {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const { userData, loading , jwt, UserTransactions} = useUserData(); // Access the user data and loading state
   
-  console.log(UserTransactions)
+  // console.log(UserTransactions)
   if (loading) {
       return <div className="flex justify-center items-center h-screen text-white">Loading...</div>; // Display loading state
   }

@@ -76,7 +76,7 @@ function App() {
                     },
                 });
 
-            console.log(response.data)
+            // console.log(response.data)
 
             if (response.data.status === 1) {
                 setSubmitButtonText('I have Paid')
@@ -143,7 +143,7 @@ function App() {
                         }
                     );
                     setDepositStatus(response.data);  // Set user data
-                    console.log(response.data);  // Set user data
+                    // console.log(response.data);  // Set user data
                 } catch (error) {
                     console.error('Error fetching user details:', error);
                 }

@@ -39,7 +39,7 @@ const More = () => {
 
                         <MenuItem icon={<Settings2 />} link='sms:+15512270514&body=Hello Support, My ID is #123232,' label="Contact Support" />
 
-                        <MenuItem icon={<LogOut />} link='/login' label="Logout" />
+                        <MenuItem icon={<LogOut />} link='/logout' label="Logout" />
                         </div>
                     </div>
 

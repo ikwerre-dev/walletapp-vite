@@ -43,7 +43,7 @@ const Settings = () => {
                 }
             );
 
-            console.log(response.data);
+            // console.log(response.data);
             if (response.data.status === 1) {
                 toast.success(response.data.message);
             } else {
