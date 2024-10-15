@@ -17,6 +17,10 @@ const Withdraw = () => {
     const [withdrawalResponse, setWithdrawalResponse] = useState(''); // State for withdrawal response
     const [SubmitButtonText, setSubmitButtonText] = useState('Withdraw'); // State for withdrawal response
     const [SubmitButtonDisabled, setSubmitButtonDisabled] = useState(false); // State for withdrawal response
+    const [UnverifiedTask, setUnverifiedTask] = useState(true);
+    const [PendingWithdrawal, setPendingWithdrawal] = useState(true);
+    const [approvedWithdrawal, setapprovedWithdrawal] = useState(true);
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -33,29 +37,42 @@ const Withdraw = () => {
                         }
                     );
                     // alert(response.data.data);
-                    if(response.data.data != null){
-                    setDepositStatus(response.data);
-                    setNextWithdrawalDate(response.data.time_left);
-                    setWithdrawalAmount(
-                        ((parseInt(response.data.data.task_day) * 0.2 * parseInt(response.data.data.amount)) + parseInt(response.data.data.amount)).toLocaleString()
-                    );
+                    if (response.data.data != null) {
+                        setDepositStatus(response.data);
+                        setNextWithdrawalDate(response.data.time_left);
+                        setWithdrawalAmount(
+                            ((parseInt(response.data.data.task_day) * 0.2 * parseInt(response.data.data.amount)) + parseInt(response.data.data.amount)).toLocaleString()
+                        );
 
-                    setDepositDay(response.data.data.task_day);
-                    const packageName = response.data.data.package_name;
+                        if (response.data.data.status != 1) {
+                            setUnverifiedTask(false)
+                        }
 
-                    if (packageName === 'Lite' || packageName === 'Standard') {
-                        setWithdrawalMethod('Bitcoin');
-                        setWithdrawalMethodText('Enter your Bitcoin wallet address');
-                    } else if (packageName === 'Gold' || packageName === 'Emerald') {
-                        setWithdrawalMethod('Bank direct deposit');
-                        setWithdrawalMethodText('Enter your bank account details');
+                        if (response.data.data.is_withdrawn != 0) {
+                            setPendingWithdrawal(false)
+                        }
+                        if (response.data.data.withdrawal_status != 1) {
+                            setapprovedWithdrawal(false)
+                        }
+
+
+
+                        setDepositDay(response.data.data.task_day);
+                        const packageName = response.data.data.package_name;
+
+                        if (packageName === 'Lite' || packageName === 'Standard') {
+                            setWithdrawalMethod('Bitcoin');
+                            setWithdrawalMethodText('Enter your Bitcoin wallet address');
+                        } else if (packageName === 'Gold' || packageName === 'Emerald') {
+                            setWithdrawalMethod('Bank direct deposit');
+                            setWithdrawalMethodText('Enter your bank account details');
+                        } else {
+                            setWithdrawalMethod('Cashapp');
+                            setWithdrawalMethodText('Enter your Cashapp username');
+                        }
                     } else {
-                        setWithdrawalMethod('Cashapp');
-                        setWithdrawalMethodText('Enter your Cashapp username');
-                    }
-                }else{
 
-                }
+                    }
                 } catch (error) {
                     console.error('Error fetching user details:', error);
                 }
@@ -118,65 +135,96 @@ const Withdraw = () => {
             <div className="bg-white text-black p-4 px-6 rounded-t-3xl mt-4 flex-grow">
                 <h3 className="font-bold mb-4">Withdraw</h3>
                 <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-md">
-                    <div className="mb-4">
-                        <div className="flex justify-between items-center mb-2">
-                            <h3 className="font-bold">Days Completed</h3>
-                        </div>
-                        <div className="bg-gray-500 rounded-sm mt-2">
-                            <div
-                                className={`progress bg-${DepositDay === 4 ? 'green' : DepositDay === 3 ? 'orange' : 'red'}-500 h-2`}
-                                style={{ width: `${(DepositDay / 4) * 100}%` }}
-                            ></div>
-                        </div>
-                        <div className="flex mt-1 justify-between w-full">
-                            <p>{DepositDay}</p>
-                            <p>{4}</p>
-                        </div>
-                        <hr className='my-3' />
-                        <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-gray-600 text-xs">Next Withdrawal Date</h3>
-                            <h3 className="font-bold text-xs">{NextWithdrawalDate}</h3>
-                        </div>
-                        <hr className='my-3' />
 
-                        <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-gray-600 text-xs">Withdrawal Method</h3>
-                            <h3 className="font-bold text-xs">{WithdrawalMethod}</h3>
+                    {!UnverifiedTask ? (
+                        <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-800 rounded-md">
+                            <strong className="block font-medium">Please Wait!</strong>
+                            <span>Your Deposit is still pending.</span>
                         </div>
-                        <hr className='my-3' />
+                    ) : (
+                        <>
+                            <div className="mb-4">
 
-                        <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-gray-600 text-xs">Withdrawal Amount</h3>
-                            <h3 className="font-bold text-xs">${WithdrawalAmount}</h3>
-                        </div>
-                        {WithdrawalAmount != 0 ? (
-                            <>
-                        <hr className='my-3' />
-                        <div className="flex flex-col justify-between gap-2 mb-2">
-                            <h3 className="text-gray-600 text-xs">{WithdrawalMethodText}</h3>
-                            <input
-                                type="text"
-                                placeholder={WithdrawalMethodText}
-                                className="border p-2 text-xs w-full rounded rounded-lg outline-none"
-                                value={withdrawalInput}  // Set the input value
-                                onChange={(e) => setWithdrawalInput(e.target.value)}  // Update the state on input change
-                            />
-                        </div>
+                                {!PendingWithdrawal ? (
+                                    <>
+                                        {!approvedWithdrawal ? (
+                                            <div className="mt-4 p-4 bg-orange-100 border border-orange-400 text-orange-800 rounded-md">
+                                                <strong className="block font-medium">Please Wait!</strong>
+                                                <span>Your Withdrawal is being processed.</span>
+                                            </div>
+                                        ) : (
+                                            <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-800 rounded-md">
+                                                <strong className="block font-medium">Withdrawal Succesful!</strong>
+                                                <span>Your Withdrawal has being processed.</span>
+                                            </div>
+                                        )}
+                                    </>
+                                )
+                                    : (
+                                        <>
+                                            <div className="flex justify-between items-center mb-2">
+                                                <h3 className="font-bold">Days Completed</h3>
+                                            </div>
+                                            <div className="bg-gray-500 rounded-sm mt-2">
+                                                <div
+                                                    className={`progress bg-${DepositDay === 4 ? 'green' : DepositDay === 3 ? 'orange' : 'red'}-500 h-2`}
+                                                    style={{ width: `${(DepositDay / 4) * 100}%` }}
+                                                ></div>
+                                            </div>
+                                            <div className="flex mt-1 justify-between w-full">
+                                                <p>{DepositDay}</p>
+                                                <p>{4}</p>
+                                            </div>
+                                            <hr className='my-3' />
+                                            <div className="flex justify-between items-center mb-2">
+                                                <h3 className="text-gray-600 text-xs">Next Withdrawal Date</h3>
+                                                <h3 className="font-bold text-xs">{NextWithdrawalDate}</h3>
+                                            </div>
+                                            <hr className='my-3' />
+
+                                            <div className="flex justify-between items-center mb-2">
+                                                <h3 className="text-gray-600 text-xs">Withdrawal Method</h3>
+                                                <h3 className="font-bold text-xs">{WithdrawalMethod}</h3>
+                                            </div>
+                                            <hr className='my-3' />
+
+                                            <div className="flex justify-between items-center mb-2">
+                                                <h3 className="text-gray-600 text-xs">Withdrawal Amount</h3>
+                                                <h3 className="font-bold text-xs">${WithdrawalAmount}</h3>
+                                            </div>
+                                            {WithdrawalAmount != 0 ? (
+                                                <>
+                                                    <hr className='my-3' />
+                                                    <div className="flex flex-col justify-between gap-2 mb-2">
+                                                        <h3 className="text-gray-600 text-xs">{WithdrawalMethodText}</h3>
+                                                        <input
+                                                            type="text"
+                                                            placeholder={WithdrawalMethodText}
+                                                            className="border p-2 text-xs w-full rounded rounded-lg outline-none"
+                                                            value={withdrawalInput}  // Set the input value
+                                                            onChange={(e) => setWithdrawalInput(e.target.value)}  // Update the state on input change
+                                                        />
+                                                    </div>
+                                                </>
+                                            ) : ''}
+                                            <button
+                                                className={`w-full px-4 py-2 mt-4 text-sm text-white  ${DepositStatus.is_withdrawable == 1 && SubmitButtonDisabled == false ? '' : 'opacity-50'}  bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
+                                                disabled={DepositStatus.is_withdrawable !== 1 || SubmitButtonDisabled}
+                                                onClick={handleWithdrawal} // Call handleWithdrawal on click
+                                            >
+                                                {DepositStatus.is_withdrawable === 1 ? SubmitButtonText : 'Withdrawal Unavailable'}
+                                            </button>
+                                        </>
+
+                                    )}
+
+                            </div>
                         </>
-                        ) : '' }
-                        <button
-                            className={`w-full px-4 py-2 mt-4 text-sm text-white  ${DepositStatus.is_withdrawable == 1 && SubmitButtonDisabled == false ? '' : 'opacity-50'}  bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
-                            disabled={DepositStatus.is_withdrawable !== 1 || SubmitButtonDisabled}
-                            onClick={handleWithdrawal} // Call handleWithdrawal on click
-                        >
-                            {DepositStatus.is_withdrawable === 1 ? SubmitButtonText : 'Withdrawal Unavailable'}
-                        </button>
-
-                    </div>
-
+                    )
+                    }
                 </div>
             </div>
-        </div> 
+        </div>
     );
 };
 

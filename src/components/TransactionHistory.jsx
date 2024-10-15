@@ -72,28 +72,34 @@ const History = () => {
           <h3 className="font-bold">Latest Transactions</h3>
           <Link to={'/history'} className="text-indigo-600 text-sm">View all</Link>
         </div>
-        {UserTransactions && UserTransactions.map((transaction, index) => (
-          <div key={index} className="flex items-center justify-between py-2" onClick={() => setSelectedTransaction(transaction)}>
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
-                <span className="text-lg">{transaction.type == 1 ? <Plus size={20} /> : <ArrowDown size={20} />}</span>
+        {UserTransactions.length > 0 ? (
+          UserTransactions.map((transaction, index) => (
+            <div key={index} className="flex items-center justify-between py-2" onClick={() => setSelectedTransaction(transaction)}>
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                  <span className="text-lg">{transaction.type === 1 ? <Plus size={20} /> : <ArrowDown size={20} />}</span>
+                </div>
+                <div>
+                  <p className="font-semibold text-sm">{transaction.type === 1 ? 'Deposit' : 'Withdrawal'}</p>
+                  <p className={`text-xs ${transaction.status === 0 ? 'text-orange-500' : transaction.status === 1 ? 'text-green-500' : 'text-red-500'}`}>
+                    {transaction.status === 0 ? 'Pending' : transaction.status === 1 ? 'Successful' : 'Failed'}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="font-semibold text-sm">{transaction.type == 1 ? 'Deposit' : 'Withdrawal'}</p>
-                <p className={`text-xs ${transaction.status === 0 ? 'text-orange-500' : transaction.status === 1 ? 'text-green-500' : 'text-red-500'}`}>
-                  {transaction.status === 0 ? 'Pending' : transaction.status === 1 ? 'Successful' : 'Failed'}
-               </p>
-                
+              <div className="flex items-center">
+                <span className={`font-semibold ${transaction.type === 1 ? 'text-green-500' : 'text-red-500'}`}>
+                  {transaction.type === 1 ? '+' : '-'}${Math.abs(transaction.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+                <ArrowUp className="w-4 h-4 ml-2 transform rotate-45" />
               </div>
             </div>
-            <div className="flex items-center">
-              <span className={`font-semibold ${transaction.type == 1 ? 'text-green-500' : 'text-red-500'}`}>
-                {transaction.type === 1 ? '+' : '-'}${Math.abs(transaction.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </span>
-              <ArrowUp className="w-4 h-4 ml-2 transform rotate-45" />
-            </div>
+          ))
+        ) : (
+          <div className="mt-4 p-4 bg-gray-100 border border-gray-400 text-gray-800 rounded-md">
+            <strong className="block font-medium">No Transaction Found</strong>
           </div>
-        ))}
+        )}
+
       </div>
 
       {selectedTransaction && (
