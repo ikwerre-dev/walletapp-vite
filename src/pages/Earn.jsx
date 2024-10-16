@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Confetti from 'react-confetti';
 import { Settings, ArrowUp, ArrowDown, RefreshCw, Home, Clock, CreditCard, MoreHorizontal, Link2, Plus, Info, Share2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
@@ -20,10 +21,18 @@ const Earn = ({ maxShares = 20 }) => {
     const [depositStatus, setDepositStatus] = useState(null);
     const [daysPassed, setDaysPassed] = useState(0);
     const [InvalidTask, setInvalidTask] = useState(false);
+    const [Task_Day, setTask_Day] = useState(0);
+    const [Task_ID, setTask_ID] = useState(0);
+    const [Task_package_name, setTask_package_name] = useState(0);
+    const [Task_claimed_bonus, setTask_claimed_bonus] = useState(0);
     const [UnverifiedTask, setUnverifiedTask] = useState(true);
     const [isTaskAvailable, setIsTaskAvailable] = useState(false);
     const navigate = useNavigate();
+    const [showConfetti, setShowConfetti] = useState(false);
 
+
+    console.log(Task_claimed_bonus)
+    console.log(Task_package_name)
 
     useEffect(() => {
         const taskCompleteCookie = Cookies.get('taskComplete');
@@ -32,7 +41,7 @@ const Earn = ({ maxShares = 20 }) => {
 
             if (taskCompleteCookie >= maxShares) {
                 setShowClaimButton(true);
- 
+
             }
         }
     }, []);
@@ -53,6 +62,10 @@ const Earn = ({ maxShares = 20 }) => {
             // console.log('days_difference: ' + differenceInDays);
             // console.log('task day: ' + depositStatus.data.task_day);
             setDaysPassed(differenceInDays);
+            setTask_Day(depositStatus.data.task_day)
+            setTask_ID(depositStatus.data.id)
+            setTask_package_name(depositStatus.data.package_name)
+            setTask_claimed_bonus(depositStatus.data.claimed_bonus)
             if (differenceInDays > depositStatus.data.task_day) {
                 setInvalidTask(true)
             }
@@ -81,6 +94,36 @@ const Earn = ({ maxShares = 20 }) => {
 
         }
     }, [depositStatus]);
+
+
+    const claimProfit = async () => {
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}ClaimBonus`,
+                {
+                    id: Task_ID
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${jwt}`,
+                    },
+                }
+            );
+            console.log(response.data);
+            toast.info(response.data.message);
+
+            setShowConfetti(true);
+
+            setTimeout(() => {
+                setShowConfetti(false);
+                navigate(0)
+            }, 5000);
+        } catch (error) {
+            console.error('Error fetching deposit details:', error);
+            toast.error('Failed to fetch deposit details');
+        }
+    };
+
 
     const fetchDepositData = async () => {
         try {
@@ -176,6 +219,10 @@ const Earn = ({ maxShares = 20 }) => {
     if (loading) {
         return <div className="flex justify-center items-center h-screen text-white">Loading...</div>;
     }
+
+
+
+
     return (
         <div className="flex flex-col h-screen mb-[5rem] bg-[#270685] text-white">
             <BalanceCard amount={userData.balance} type={2} />
@@ -204,10 +251,21 @@ const Earn = ({ maxShares = 20 }) => {
                             </div>
 
                             <div className="mb-4">
+                                {showConfetti && <Confetti />}
+
+                                {Task_package_name == 'premium' && Task_claimed_bonus == 0 && Task_Day >= 3 || Task_package_name == 'Gold' && Task_claimed_bonus == 0 && Task_Day >= 3 || Task_package_name == 'Emerald' && Task_claimed_bonus == 0 && Task_Day >= 3 ?
+                                    (
+                                        <div className="my-4 p-4 bg-green-100 border grid border-green-400 text-green-800 rounded-md">
+                                            <strong className="block font-medium my-1">Congratulations</strong>
+                                            <span>Congratulations you've been selected as the winner of monthly PCH price. Hit the claim to be added to your balance.</span>
+                                            <button onClick={claimProfit} className="w-full py-2 px-4 border text-center border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-900 mt-3 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Claim</button>
+                                        </div>
+                                    ) : ""}
+
                                 <h4 className="font-semibold mb-2">Share to earn:</h4>
                                 <div className="">
                                     <p className='text-xs mb-2 flex gap-2'><Info size={15} /> Our system can detect if the link was not shared, which may result in freezing your account</p>
-                                    <p className='text-xs flex mb-2 gap-2'><Info size={15} /> You'll earn more whenever someone clicks the referral link and joins</p>
+                                    <p className='text-xs flex mb-2 gap-2'><Info size={15} /> You will earn 20% return when someone clicks on your link and invest </p>
                                 </div>
                                 <div className="flex flex-wrap gap-2 mt-5">
                                     {shareLinks.map((link, index) => (
@@ -250,8 +308,8 @@ const Earn = ({ maxShares = 20 }) => {
                                 </div>
                             )}
 
-                            {!isTaskAvailable && (
-                                daysPassed == 4 ? (
+                            {!isTaskAvailable ? (
+                                daysPassed >= 4 ? (
                                     <div className="mt-4 p-4 bg-green-100 border grid border-green-400 text-green-800 rounded-md">
                                         <strong className="block font-medium">Withdrawal Available</strong>
                                         <span>Head over to the withdrawals page to process your withdrawal.</span>
@@ -264,14 +322,21 @@ const Earn = ({ maxShares = 20 }) => {
 
                                     </div>
                                 )
-                            )}
+                            ) :
+                                (
+                                    <>
+                                        {InvalidTask && (
+                                            <div className="mt-4 p-4 bg-red-100 border border-red-400 text-yellow-800 rounded-md">
+                                                <strong className="block font-medium">Task Unavailable</strong>
+                                                <span>Task is currently unavailable as you missed a day in your task!</span>
+                                            </div>
+                                        )}
+                                    </>
+                                )
 
-                            {InvalidTask && (
-                                <div className="mt-4 p-4 bg-red-100 border border-red-400 text-yellow-800 rounded-md">
-                                    <strong className="block font-medium">Task Unavailable</strong>
-                                    <span>Task is currently unavailable as you missed a day in your task!</span>
-                                </div>
-                            )}
+                            }
+
+
                         </>
                     ) : (
                         <div className="text-center">No active deposit found. Please make a deposit to start earning.</div>

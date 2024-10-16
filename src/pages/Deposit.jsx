@@ -9,13 +9,7 @@ import axios from 'axios';
 import { NumericFormat } from 'react-number-format';
 import useUserData from '../components/Data.jsx'; // Import the custom hook
 
-const cryptos = [
-    { symbol: 'BTC', name: 'Bitcoin', color: 'bg-orange-500', qr: true, data: "Btc13084h3niw7r9r34n", instruction: "Pay to this wallet" },
-    { symbol: 'UDST', name: 'Usdt', color: 'bg-orange-500', qr: true, data: "Btc13084h3niw7r9r34n", instruction: "Pay to this wallet" },
-    { symbol: 'PAYPAL', name: 'Paypal', color: 'bg-blue-500', qr: false, data: "me@gmail.com", instruction: "Pay to family and friends" },
-    { symbol: 'CASH APP', name: 'Cash App', color: 'bg-green-500', qr: false, data: "Btc13084h3niw7r9r34n", instruction: "Pay to this wallet" },
 
-];
 
 const packages = [
     { name: 'Lite', color: 'bg-orange-500', min: 10, max: 30 },
@@ -30,6 +24,7 @@ const packages = [
 function App() {
     const [walletAddress, setWalletAddress] = useState('');
     const [amount, setAmount] = useState('');
+    const [cryptos, setcryptos] = useState([]);
     const [DepositStatus, setDepositStatus] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isPackageModalOpen, setIsPackageModalOpen] = useState(false);
@@ -45,7 +40,8 @@ function App() {
     const { userData, loading, jwt } = useUserData(); // Access the user data and loading state
     const [SubmitButtonText, setSubmitButtonText] = useState('I have Paid'); // State for withdrawal response
     const [SubmitButtonDisabled, setSubmitButtonDisabled] = useState(false); // State for withdrawal response
- 
+
+
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
@@ -57,6 +53,38 @@ function App() {
 
     const openPaymentMethodModal = () => setIsPaymentMethodModalOpen(true);
     const closePaymentMethodModal = () => setIsPaymentMethodModalOpen(false);
+  
+  
+    useEffect(() => {
+
+        if (jwt) {
+            const fetchData = async () => {
+                try {
+                    const response = await axios.post(
+                        `${import.meta.env.VITE_API_BASE_URL}getAllWallets`, // API endpoint
+                        {},
+                        {
+                            headers: {
+                                Authorization: `Bearer ${jwt}`, // Pass JWT in the Authorization header
+                            },
+                        }
+                    );
+                    
+                    setcryptos(response.data.data);
+                    setSelectedCrypto(response.data.data[0])
+                    // Set user data
+                } catch (error) {
+                    console.error('Error fetching user details:', error);
+                }
+            };
+
+            fetchData();
+        } else {
+            setLoading(false);  // No JWT means no data; finish loading
+        }
+    }, []);
+
+
 
     const openIntiatePaymentModal = async (e) => {
 
@@ -364,9 +392,9 @@ function App() {
                                 ...DepositStatus.data && DepositStatus.data.is_withdrawn == 0 && DepositStatus.data.task_day == 4 ?
                                     <>
                                         <div className='bg-indigo-500 p-5 rounded-2xl text-white w-full'>
-                                             <p className='text-sm pb-3'>Please process your current withdrawal to be eligible to deposit</p>
-                                                <Link to='/withdraw' className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-900 mt-3 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Withdraw</Link>
-                                                
+                                            <p className='text-sm pb-3'>Please process your current withdrawal to be eligible to deposit</p>
+                                            <Link to='/withdraw' className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-900 mt-3 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Withdraw</Link>
+
                                         </div>
                                     </> : <>
 
@@ -395,10 +423,10 @@ function App() {
                                                 onClick={openModal}
                                             >
                                                 <div className="flex items-center">
-                                                    <div className={`${selectedCrypto.color} text-white text-sm rounded-full w-6 h-6 flex items-center justify-center mr-3`}>
-                                                        {selectedCrypto.symbol[0]}
+                                                    <div className={`${selectedCrypto && selectedCrypto.color} text-white text-sm rounded-full w-6 h-6 flex items-center justify-center mr-3`}>
+                                                        {selectedCrypto && selectedCrypto.symbol[0]}
                                                     </div>
-                                                    <span className=" text-xs font-semibold">{selectedCrypto.name} ({selectedCrypto.symbol})</span>
+                                                    <span className=" text-xs font-semibold">{selectedCrypto && selectedCrypto.name} ({selectedCrypto && selectedCrypto.symbol})</span>
                                                 </div>
                                                 <ChevronRight className="text-gray-400" />
                                             </div>
@@ -492,14 +520,14 @@ function App() {
                                                     </div>
                                                     <div className="space-y-2 mt-[2rem]">
                                                         <PaymentMethod
-                                                            key={selectedCrypto.name}
-                                                            name={selectedCrypto.name}
-                                                            qr={selectedCrypto.qr}
-                                                            data={selectedCrypto.data}
-                                                            instruction={selectedCrypto.instruction}
-                                                            providers={selectedCrypto.name}
-                                                            isSelected={selectedMethod === selectedCrypto.name}
-                                                            onClick={() => setSelectedMethod(selectedCrypto.name)}
+                                                            key={selectedCrypto && selectedCrypto.name}
+                                                            name={selectedCrypto && selectedCrypto.name}
+                                                            qr={selectedCrypto && selectedCrypto.qr}
+                                                            data={selectedCrypto && selectedCrypto.data}
+                                                            instruction={selectedCrypto && selectedCrypto.instruction}
+                                                            providers={selectedCrypto && selectedCrypto.name}
+                                                            isSelected={selectedMethod === selectedCrypto && selectedCrypto.name}
+                                                            onClick={() => setSelectedMethod(selectedCrypto && selectedCrypto.name)}
                                                         />
 
                                                     </div>
@@ -517,7 +545,7 @@ function App() {
                                             <div className={`absolute inset-0 bg-white transform transition-transform z-50 duration-300 ease-in-out ${IntiatePaymentModal ? 'translate-x-0' : 'translate-x-full'}`}>
                                                 <div className="p-4 h-full overflow-y-auto">
                                                     <div className="flex justify-between items-center mb-4">
-                                                        <h3 className="text-xl font-bold">{selectedCrypto.name} Payment</h3>
+                                                        <h3 className="text-xl font-bold">{selectedCrypto && selectedCrypto.name} Payment</h3>
                                                         <button onClick={closeIntiatePaymentModal} className="text-gray-500 hover:text-gray-700">
                                                             <X size={24} />
                                                         </button>

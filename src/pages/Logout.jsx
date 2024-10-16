@@ -11,7 +11,7 @@ const Logout = () => {
     Cookies.remove('refresh_token');
 
     // Redirect to the login page
-    // navigate('/login');
+    navigate('/login'); 
   }, [navigate]);
 
   return (

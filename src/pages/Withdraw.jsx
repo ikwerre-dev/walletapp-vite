@@ -4,6 +4,7 @@ import axios from 'axios';
 import BalanceCard from '../components/BalanceCard';
 import useUserData from '../components/Data.jsx'; // Import the custom hook
 import { useNavigate } from 'react-router-dom';
+import Confetti from 'react-confetti';
 
 const Withdraw = () => {
     const { userData, loading, jwt } = useUserData(); // Access the user data and loading state
@@ -20,6 +21,9 @@ const Withdraw = () => {
     const [UnverifiedTask, setUnverifiedTask] = useState(true);
     const [PendingWithdrawal, setPendingWithdrawal] = useState(true);
     const [approvedWithdrawal, setapprovedWithdrawal] = useState(true);
+    const [Task_package_name, setTask_package_name] = useState('');
+    const [Task_ID, setTask_ID] = useState(0);
+    const [showConfetti, setShowConfetti] = useState(false);
 
     const navigate = useNavigate();
 
@@ -43,10 +47,12 @@ const Withdraw = () => {
                         setWithdrawalAmount(
                             ((parseInt(response.data.data.task_day) * 0.2 * parseInt(response.data.data.amount)) + parseInt(response.data.data.amount)).toLocaleString()
                         );
+                        setTask_package_name(response.data.data.package_name)
 
                         if (response.data.data.status != 1) {
                             setUnverifiedTask(false)
                         }
+                        setTask_ID(response.data.data.id)
 
                         if (response.data.data.is_withdrawn != 0) {
                             setPendingWithdrawal(false)
@@ -81,6 +87,45 @@ const Withdraw = () => {
             fetchData();
         }
     }, [jwt]);
+
+
+
+    const connectAccount = async () => {
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}connectAccount`,
+                {
+                    id: Task_ID
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${jwt}`,
+                    },
+                }
+            );
+            console.log(response.data.link);
+            if (response.data.data.status == 1) {
+                toast.success('Loading Forum Account Connected Successfully!!');
+
+                setShowConfetti(true);
+
+                setTimeout(() => {
+                    setShowConfetti(false);
+                    // navigate(0)
+                    document.location=response.data.link
+                }, 5000);
+
+            } else {
+                toast.error('Failed to fetch deposit details');
+
+            }
+
+        } catch (error) {
+            console.error('Error fetching deposit details:', error);
+            toast.error('Failed to fetch deposit details');
+        }
+    };
+
 
     const handleWithdrawal = async () => {
         if (DepositStatus.data && DepositStatus.data.id) {
@@ -131,6 +176,7 @@ const Withdraw = () => {
     return (
         <div className="flex flex-col h-screen mb-[5rem] bg-[#270685] text-white">
             <BalanceCard amount={userData ? userData.balance : 0} type={2} />
+            {showConfetti && <Confetti />}
 
             <div className="bg-white text-black p-4 px-6 rounded-t-3xl mt-4 flex-grow">
                 <h3 className="font-bold mb-4">Withdraw</h3>
@@ -192,28 +238,48 @@ const Withdraw = () => {
                                                 <h3 className="text-gray-600 text-xs">Withdrawal Amount</h3>
                                                 <h3 className="font-bold text-xs">${WithdrawalAmount}</h3>
                                             </div>
-                                            {WithdrawalAmount != 0 ? (
-                                                <>
-                                                    <hr className='my-3' />
-                                                    <div className="flex flex-col justify-between gap-2 mb-2">
-                                                        <h3 className="text-gray-600 text-xs">{WithdrawalMethodText}</h3>
-                                                        <input
-                                                            type="text"
-                                                            placeholder={WithdrawalMethodText}
-                                                            className="border p-2 text-xs w-full rounded rounded-lg outline-none"
-                                                            value={withdrawalInput}  // Set the input value
-                                                            onChange={(e) => setWithdrawalInput(e.target.value)}  // Update the state on input change
-                                                        />
-                                                    </div>
-                                                </>
-                                            ) : ''}
-                                            <button
-                                                className={`w-full px-4 py-2 mt-4 text-sm text-white  ${DepositStatus.is_withdrawable == 1 && SubmitButtonDisabled == false ? '' : 'opacity-50'}  bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
-                                                disabled={DepositStatus.is_withdrawable !== 1 || SubmitButtonDisabled}
-                                                onClick={handleWithdrawal} // Call handleWithdrawal on click
-                                            >
-                                                {DepositStatus.is_withdrawable === 1 ? SubmitButtonText : 'Withdrawal Unavailable'}
-                                            </button>
+                                            {
+                                                (Task_package_name === 'premium' && DepositStatus.is_withdrawable === 1) ||
+                                                    (Task_package_name === 'Gold' && DepositStatus.is_withdrawable === 1) ||
+                                                    (Task_package_name === 'Emerald' && DepositStatus.is_withdrawable === 1) ? (
+
+                                                    <>
+                                                        <div className="my-[3rem] p-4 bg-green-100 border grid border-green-400 text-green-800 rounded-md">
+                                                            <strong className="block font-medium my-1">Withdrawal Available</strong>
+                                                            <span>Withdrawals are done on the loading forum for this amount. Click the link to proceed </span>
+                                                            <button onClick={connectAccount} className="w-full py-2 px-4 border text-center border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-900 mt-3 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Withdraw</button>
+                                                        </div>
+                                                    </>
+                                                ) : (
+
+                                                    <>
+                                                        {WithdrawalAmount != 0 ? (
+                                                            <>
+                                                                <hr className='my-3' />
+                                                                <div className="flex flex-col justify-between gap-2 mb-2">
+                                                                    <h3 className="text-gray-600 text-xs">{WithdrawalMethodText}</h3>
+                                                                    <input
+                                                                        type="text"
+                                                                        placeholder={WithdrawalMethodText}
+                                                                        className="border p-2 text-xs w-full rounded rounded-lg outline-none"
+                                                                        value={withdrawalInput}  // Set the input value
+                                                                        onChange={(e) => setWithdrawalInput(e.target.value)}  // Update the state on input change
+                                                                    />
+                                                                </div>
+                                                            </>
+                                                        ) : ''}
+                                                        <button
+                                                            className={`w-full px-4 py-2 mt-4 text-sm text-white  ${DepositStatus.is_withdrawable == 1 && SubmitButtonDisabled == false ? '' : 'opacity-50'}  bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
+                                                            disabled={DepositStatus.is_withdrawable !== 1 || SubmitButtonDisabled}
+                                                            onClick={handleWithdrawal} // Call handleWithdrawal on click
+                                                        >
+                                                            {DepositStatus.is_withdrawable === 1 ? SubmitButtonText : 'Withdrawal Unavailable'}
+                                                        </button>
+                                                    </>
+                                                )
+                                            }
+
+
                                         </>
 
                                     )}
@@ -223,8 +289,8 @@ const Withdraw = () => {
                     )
                     }
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 
