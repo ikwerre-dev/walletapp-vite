@@ -15,6 +15,7 @@ import ShareButton from './pages/Splash';
 import Withdraw from './pages/Withdraw';
 import Settings from './pages/Settings';
 import Logout from './pages/Logout';
+import Reset from './pages/Reset';
 // const jwt = Cookies.get('jwt'); // Check if JWT exists
 
 const PrivateRoute = ({ element }) => {
@@ -39,6 +40,7 @@ const App = () => {
         <Route path="/dashboard" element={<PrivateRoute element={<Home />} />} />
         <Route path="/signup" element={<PublicRoute element={<Signup />} />} />
         <Route path="/r/:data" element={<PublicRoute element={<Signup />} />} />
+        <Route path="/reset/:data" element={<PublicRoute element={<Reset />} />} />
         <Route path="/login" element={<PublicRoute element={<Login />} />} />
         <Route path="/forgot-password" element={<PublicRoute element={<RecoverPassword />} />} />
 
