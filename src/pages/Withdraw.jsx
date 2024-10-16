@@ -70,8 +70,8 @@ const Withdraw = () => {
                             setWithdrawalMethod('Bitcoin');
                             setWithdrawalMethodText('Enter your Bitcoin wallet address');
                         } else if (packageName === 'Gold' || packageName === 'Emerald') {
-                            setWithdrawalMethod('Bank direct deposit');
-                            setWithdrawalMethodText('Enter your bank account details');
+                            setWithdrawalMethod('Cashapp');
+                            setWithdrawalMethodText('Enter your Cashapp Username');
                         } else {
                             setWithdrawalMethod('Cashapp');
                             setWithdrawalMethodText('Enter your Cashapp username');

@@ -29,7 +29,7 @@ const TransactionPopup = ({ transaction, onClose }) => {
             <span className="text-3xl">{transaction.type == 1 ? <Plus size={20} /> : <ArrowDown size={20} />}</span>
           </div>
           <div>
-            <h3 className="font-bold text-lg">{transaction.type == 1 ? 'Deposit for ' + transaction.package_name : 'Withdrawal'}</h3>
+            <h3 className="font-bold text-lg">{transaction.type == 1 ? 'Deposit' : 'Withdrawal'}</h3>
           </div>
         </div>
         <div className={` rounded-xl p-4 mb-4 font-semibold ${transaction.type == 1 ? 'bg-green-500' : 'bg-red-500'}`}>
@@ -37,7 +37,7 @@ const TransactionPopup = ({ transaction, onClose }) => {
             {transaction.type == 1 ? '+' : '-'}${Math.abs(transaction.amount).toFixed(2)}
           </span>
         </div>
-        <p className="text-gray-500 mb-4">Transaction no.</p>
+        <p className="text-gray-500 mb-4">Transaction no. trns_{(transaction.type == 1 ? transaction.deposit_id : transaction.withdraw_id).toString().padStart(6, '0')}        </p>
         <p className="font-mono text-sm mb-4">{transaction.created_at}</p>
         <button className="text-red-500 w-full py-2 border border-red-500 rounded-lg" onClick={onClose}>
           Report a problem
