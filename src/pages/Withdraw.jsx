@@ -104,6 +104,7 @@ const Withdraw = () => {
                 }
             );
             console.log(response.data.link);
+            console.log(response.data);
             if (response.data.data.status == 1) {
                 toast.success('Loading Forum Account Connected Successfully!!');
 
