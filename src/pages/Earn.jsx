@@ -23,7 +23,7 @@ const Earn = ({ maxShares = 20 }) => {
     const [InvalidTask, setInvalidTask] = useState(false);
     const [Task_Day, setTask_Day] = useState(0);
     const [Task_ID, setTask_ID] = useState(0);
-    const [Task_package_name, setTask_package_name] = useState(0);
+    const [Task_package_name, setTask_package_name] = useState('');
     const [Task_claimed_bonus, setTask_claimed_bonus] = useState(0);
     const [UnverifiedTask, setUnverifiedTask] = useState(true);
     const [isTaskAvailable, setIsTaskAvailable] = useState(false);
@@ -31,8 +31,6 @@ const Earn = ({ maxShares = 20 }) => {
     const [showConfetti, setShowConfetti] = useState(false);
 
 
-    console.log(Task_claimed_bonus)
-    console.log(Task_package_name)
 
     useEffect(() => {
         const taskCompleteCookie = Cookies.get('taskComplete');
@@ -220,8 +218,41 @@ const Earn = ({ maxShares = 20 }) => {
         return <div className="flex justify-center items-center h-screen text-white">Loading...</div>;
     }
 
-
-
+    
+    const isEligibleForBonus = () => {
+        const eligiblePackages = ['premium', 'gold', 'emerald'];
+         
+        // Convert Task_package_name to lowercase
+        const lowerCasePackageName = Task_package_name.toLowerCase();
+    
+        // Check package name condition
+        const isPackageEligible = eligiblePackages.includes(lowerCasePackageName);
+        console.log('Package Name:', lowerCasePackageName);
+        console.log('Is Package Eligible:', isPackageEligible);
+        
+        // Check bonus condition
+        const isBonusUnclaimed = Task_claimed_bonus === 0;
+        console.log('Claimed Bonus:', Task_claimed_bonus);
+        console.log('Is Bonus Unclaimed:', isBonusUnclaimed);
+        
+        // Check day count condition
+        const isTask_DayMet = Task_Day > 2;
+        console.log('Day Count:', Task_Day);
+        console.log('Is Day Count Met:', isTask_DayMet);
+        
+        // Final result
+        const finalResult = isPackageEligible && isBonusUnclaimed && isTask_DayMet;
+        console.log('Final Eligibility Result:', finalResult);
+        
+        return (
+          isPackageEligible && 
+          isBonusUnclaimed && 
+          isTask_DayMet
+        );
+    };
+    
+      
+      
 
     return (
         <div className="flex flex-col h-screen mb-[5rem] bg-[#270685] text-white">
@@ -252,15 +283,25 @@ const Earn = ({ maxShares = 20 }) => {
 
                             <div className="mb-4">
                                 {showConfetti && <Confetti />}
-
-                                {Task_package_name == 'premium' && Task_claimed_bonus == 0 && Task_Day >= 3 || Task_package_name == 'Gold' && Task_claimed_bonus == 0 && Task_Day >= 3 || Task_package_name == 'Emerald' && Task_claimed_bonus == 0 && Task_Day >= 3 ?
-                                    (
-                                        <div className="my-4 p-4 bg-green-100 border grid border-green-400 text-green-800 rounded-md">
-                                            <strong className="block font-medium my-1">Congratulations</strong>
-                                            <span>Congratulations you've been selected as the winner of monthly PCH price. Hit the claim to be added to your balance.</span>
-                                            <button onClick={claimProfit} className="w-full py-2 px-4 border text-center border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-900 mt-3 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Claim</button>
-                                        </div>
-                                    ) : ""}
+                                {isEligibleForBonus() ? (
+                                    <div className="my-4 p-4 bg-green-100 border border-green-400 text-green-800 rounded-md">
+                                        <strong className="block font-medium my-1">
+                                            Congratulations
+                                        </strong>
+                                        <span>
+                                            Congratulations you've been selected as the winner of monthly PCH price.
+                                            Hit the claim to be added to your balance.
+                                        </span>
+                                        <button
+                                            onClick={handleClaim}
+                                            className="w-full py-2 px-4 border text-center border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-900 mt-3 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                                        >
+                                            Claim
+                                        </button>
+                                    </div>
+                                ) : (
+                                   ""
+                                )}
 
                                 <h4 className="font-semibold mb-2">Share to earn:</h4>
                                 <div className="">
