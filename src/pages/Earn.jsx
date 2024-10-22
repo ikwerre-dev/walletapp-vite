@@ -300,7 +300,7 @@ const Earn = ({ maxShares = 20 }) => {
                                         </button>
                                     </div>
                                 ) : (
-                                   <p>Testing, V1</p>
+                                   ""
                                 )}
 
                                 <h4 className="font-semibold mb-2">Share to earn:</h4>
