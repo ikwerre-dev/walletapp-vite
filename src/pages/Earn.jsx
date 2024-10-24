@@ -293,7 +293,7 @@ const Earn = ({ maxShares = 20 }) => {
                                             Hit the claim to be added to your balance.
                                         </span>
                                         <button
-                                            onClick={handleClaim}
+                                            onClick={claimProfit}
                                             className="w-full py-2 px-4 border text-center border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-900 mt-3 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                                         >
                                             Claim
