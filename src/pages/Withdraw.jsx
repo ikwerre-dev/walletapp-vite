@@ -240,7 +240,7 @@ const Withdraw = () => {
                                                 <h3 className="font-bold text-xs">${WithdrawalAmount}</h3>
                                             </div>
                                             {
-                                                (Task_package_name === 'premium' && DepositStatus.is_withdrawable === 1) ||
+                                                (Task_package_name === 'Premium' && DepositStatus.is_withdrawable === 1) ||
                                                     (Task_package_name === 'Gold' && DepositStatus.is_withdrawable === 1) ||
                                                     (Task_package_name === 'Emerald' && DepositStatus.is_withdrawable === 1) ? (
 
