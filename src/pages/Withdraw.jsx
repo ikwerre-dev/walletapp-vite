@@ -233,7 +233,7 @@ const Withdraw = () => {
                                                 <h3 className="text-gray-600 text-xs">Withdrawal Method</h3>
                                                 <h3 className="font-bold text-xs">{WithdrawalMethod}</h3>
                                             </div>
-                                            <hr className='my-3' />
+                                            <hr className='my-3'/>
 
                                             <div className="flex justify-between items-center mb-2">
                                                 <h3 className="text-gray-600 text-xs">Withdrawal Amount</h3>
