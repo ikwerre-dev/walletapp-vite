@@ -11,19 +11,12 @@ import useUserData from '../components/Data.jsx'; // Import the custom hook
 
 
 
-const packages = [
-    { name: 'Lite', color: 'bg-orange-500', min: 10, max: 30 },
-    { name: 'Standard', color: 'bg-blue-500', min: 100, max: 300 },
-    { name: 'Premium', color: 'bg-green-500', min: 1000, max: 3000 },
-    { name: 'Gold', color: 'bg-indigo-500', min: 10000, max: 30000 },
-    { name: 'Emerald', color: 'bg-slate-500', min: 100000, max: 300000 },
-
-];
 
 
 function App() {
     const [walletAddress, setWalletAddress] = useState('');
     const [amount, setAmount] = useState('');
+    const [packages, setpackages] = useState([]);
     const [cryptos, setcryptos] = useState([]);
     const [DepositStatus, setDepositStatus] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,7 +26,7 @@ function App() {
     const [isScannerOpen, setIsScannerOpen] = useState(false);
     const [isCurrencyModalOpen, setIsCurrencyModalOpen] = useState(false);
     const [selectedCrypto, setSelectedCrypto] = useState(cryptos[0]);
-    const [selectedPackage, setSelectedPackage] = useState(packages[0]);
+    const [selectedPackage, setSelectedPackage] = useState('');
     const [selectedCurrency, setSelectedCurrency] = useState('USD');
     const [IntiatePaymentModal, setIntiatePaymentModal] = useState(false);
     const [proof, setProof] = useState(""); // To hold the base64 encoded image
@@ -53,8 +46,8 @@ function App() {
 
     const openPaymentMethodModal = () => setIsPaymentMethodModalOpen(true);
     const closePaymentMethodModal = () => setIsPaymentMethodModalOpen(false);
-  
-  
+
+
     useEffect(() => {
 
         if (jwt) {
@@ -69,7 +62,7 @@ function App() {
                             },
                         }
                     );
-                    
+
                     setcryptos(response.data.data);
                     setSelectedCrypto(response.data.data[0])
                     // Set user data
@@ -172,6 +165,36 @@ function App() {
                     );
                     setDepositStatus(response.data);  // Set user data
                     // console.log(response.data);  // Set user data
+                } catch (error) {
+                    console.error('Error fetching user details:', error);
+                }
+            };
+
+            fetchData();
+        } else {
+            setLoading(false);  // No JWT means no data; finish loading
+        }
+    }, []);
+
+
+
+    useEffect(() => {
+
+        if (jwt) {
+            const fetchData = async () => {
+                try {
+                    const response = await axios.post(
+                        `${import.meta.env.VITE_API_BASE_URL}getAvailablePackages`, // API endpoint
+                        {},
+                        {
+                            headers: {
+                                Authorization: `Bearer ${jwt}`, // Pass JWT in the Authorization header
+                            },
+                        }
+                    );
+                    setpackages(response.data.data);  // Set user data
+                    setSelectedPackage(response.data.data[0])
+                     // console.log(response.data);  // Set user data
                 } catch (error) {
                     console.error('Error fetching user details:', error);
                 }
@@ -410,7 +433,7 @@ function App() {
                                             >
                                                 <div className="flex items-center">
 
-                                                    <span className=" text-xs font-semibold">{selectedPackage.name} (Min ${selectedPackage.min.toLocaleString(undefined, { maximumFractionDigits: 2 })} - Max ${selectedPackage.max.toLocaleString(undefined, { maximumFractionDigits: 2 })})</span>
+                                                    <span className=" text-xs font-semibold">{selectedPackage && selectedPackage.name} (Min ${selectedPackage && selectedPackage.min.toLocaleString(undefined, { maximumFractionDigits: 2 })} - Max ${selectedPackage && selectedPackage.max.toLocaleString(undefined, { maximumFractionDigits: 2 })})</span>
                                                 </div>
                                                 <ChevronRight className="text-gray-400" />
                                             </div>
@@ -578,8 +601,8 @@ function App() {
                                                         <div className="text-gray-500">Amount</div>
                                                     </div>
                                                     <div className="flex justify-end mb-6">
-                                                        <button onClick={openPackageModal} className={`${selectedPackage.color} bg-blue-100 text-white px-3 py-1 rounded-full flex items-center`}>
-                                                            {selectedPackage.name} (Min ${selectedPackage.min.toLocaleString(undefined, { maximumFractionDigits: 2 })} - Max ${selectedPackage.max.toLocaleString(undefined, { maximumFractionDigits: 2 })})
+                                                        <button onClick={openPackageModal} className={`${selectedPackage && selectedPackage.color} bg-blue-100 text-white px-3 py-1 rounded-full flex items-center`}>
+                                                            {selectedPackage && selectedPackage.name} (Min ${selectedPackage && selectedPackage.min.toLocaleString(undefined, { maximumFractionDigits: 2 })} - Max ${selectedPackage && selectedPackage.max.toLocaleString(undefined, { maximumFractionDigits: 2 })})
                                                         </button>
                                                     </div>
                                                     <div className="grid grid-cols-3 gap-4 mb-6">

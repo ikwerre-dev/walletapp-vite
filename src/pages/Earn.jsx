@@ -289,7 +289,7 @@ const Earn = ({ maxShares = 20 }) => {
                                             Congratulations
                                         </strong>
                                         <span>
-                                            Congratulations you've been selected as the winner of monthly PCH price.
+                                            Congratulations you've been selected as the winner of $25,000 monthly PCH price.
                                             Hit the claim to be added to your balance.
                                         </span>
                                         <button
