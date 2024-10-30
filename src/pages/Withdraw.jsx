@@ -66,10 +66,10 @@ const Withdraw = () => {
                         setDepositDay(response.data.data.task_day);
                         const packageName = response.data.data.package_name;
 
-                        if (packageName === 'Lite' || packageName === 'Standard') {
+                        if (packageName == 'Lite' || packageName == 'Standard') {
                             setWithdrawalMethod('Bitcoin');
                             setWithdrawalMethodText('Enter your Bitcoin wallet address');
-                        } else if (packageName === 'Gold' || packageName === 'Emerald') {
+                        } else if (packageName == 'Gold' || packageName == 'Emerald') {
                             setWithdrawalMethod('Cashapp');
                             setWithdrawalMethodText('Enter your Cashapp Username');
                         } else {
@@ -214,7 +214,7 @@ const Withdraw = () => {
                                             </div>
                                             <div className="bg-gray-500 rounded-sm mt-2">
                                                 <div
-                                                    className={`progress bg-${DepositDay === 4 ? 'green' : DepositDay === 3 ? 'orange' : 'red'}-500 h-2`}
+                                                    className={`progress bg-${DepositDay == 4 ? 'green' : DepositDay == 3 ? 'orange' : 'red'}-500 h-2`}
                                                     style={{ width: `${(DepositDay / 4) * 100}%` }}
                                                 ></div>
                                             </div>
@@ -240,9 +240,9 @@ const Withdraw = () => {
                                                 <h3 className="font-bold text-xs">${WithdrawalAmount}</h3>
                                             </div>
                                             {
-                                                (Task_package_name === 'Premium' && DepositStatus.is_withdrawable === 1) ||
-                                                    (Task_package_name === 'Gold' && DepositStatus.is_withdrawable === 1) ||
-                                                    (Task_package_name === 'Emerald' && DepositStatus.is_withdrawable === 1) ? (
+                                                (Task_package_name == 'Premium' && DepositStatus.is_withdrawable == 1) ||
+                                                    (Task_package_name == 'Gold' && DepositStatus.is_withdrawable == 1) ||
+                                                    (Task_package_name == 'Emerald' && DepositStatus.is_withdrawable == 1) ? (
 
                                                     <>
                                                         <div className="my-[3rem] p-4 bg-green-100 border grid border-green-400 text-green-800 rounded-md">
@@ -274,7 +274,7 @@ const Withdraw = () => {
                                                             disabled={DepositStatus.is_withdrawable !== 1 || SubmitButtonDisabled}
                                                             onClick={handleWithdrawal} // Call handleWithdrawal on click
                                                         >
-                                                            {DepositStatus.is_withdrawable === 1 ? SubmitButtonText : 'Withdrawal Unavailable'}
+                                                            {DepositStatus.is_withdrawable == 1 ? SubmitButtonText : 'Withdrawal Unavailable'}
                                                         </button>
                                                     </>
                                                 )

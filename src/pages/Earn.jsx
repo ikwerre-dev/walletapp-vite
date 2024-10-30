@@ -76,7 +76,7 @@ const Earn = ({ maxShares = 20 }) => {
             // Check if a new day has started since the last task
             // setIsTaskAvailable(differenceInDays >= depositStatus.data.task_day && depositStatus.data.task_day <= 4);
             // Check if depositStatus and task_day are defined before proceeding
-            if (depositStatus && depositStatus.data && typeof depositStatus.data.task_day === 'number') {
+            if (depositStatus && depositStatus.data && typeof depositStatus.data.task_day == 'number') {
                 const taskDay = depositStatus.data.task_day;
 
                 // Ensure that taskDay is valid and within the expected range
@@ -160,7 +160,7 @@ const Earn = ({ maxShares = 20 }) => {
                     const newProgress = progress + 1;
                     setProgress(newProgress);
                     Cookies.set('taskComplete', newProgress, { expires: 1 }); // Store task completion in cookie for 1 day
-                    if (newProgress === maxShares) {
+                    if (newProgress == maxShares) {
                         setShowClaimButton(true);
                     }
                 }
@@ -231,7 +231,7 @@ const Earn = ({ maxShares = 20 }) => {
         console.log('Is Package Eligible:', isPackageEligible);
         
         // Check bonus condition
-        const isBonusUnclaimed = Task_claimed_bonus === 0;
+        const isBonusUnclaimed = Task_claimed_bonus == 0;
         console.log('Claimed Bonus:', Task_claimed_bonus);
         console.log('Is Bonus Unclaimed:', isBonusUnclaimed);
         

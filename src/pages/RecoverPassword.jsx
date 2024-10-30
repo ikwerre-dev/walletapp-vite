@@ -29,7 +29,7 @@ const RecoverPassword = () => {
                 email: formData.email
             });
             console.log(response.data)
-            if (response.data.status === 1) {
+            if (response.data.status == 1) {
                 toast.success(response.data.message);
                 setTimeout(() => {
                     navigate('/login'); // redirect to login page after success

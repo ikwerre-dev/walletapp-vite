@@ -12,7 +12,7 @@ export const AuthController = {
     try {
       const response = await axios.post(`${baseUrl}/register`, userData);
 
-      if (response.data.status === 1) {
+      if (response.data.status == 1) {
         // Save JWT and refresh token in cookies
         Cookies.set('jwt', response.data.jwt, { expires: 7 });
         Cookies.set('refresh_token', response.data.refresh_token, { expires: 7 });
@@ -35,7 +35,7 @@ export const AuthController = {
     try {
       const response = await axios.post(`${baseUrl}/login`, credentials);
 
-      if (response.data.status === 1) {
+      if (response.data.status == 1) {
         // Save JWT and refresh token in cookies
         Cookies.set('jwt', response.data.jwt, { expires: 7 });
         Cookies.set('refresh_token', response.data.refresh_token, { expires: 7 });

@@ -33,7 +33,7 @@ const LoginForm = () => {
 
             // console.log(response.data);
 
-            if (response.data.status === 1) {
+            if (response.data.status == 1) {
                 toast.success(response.data.message);
                 Cookies.set('jwt', response.data.jwt);
                 Cookies.set('refresh_token', response.data.refresh_token);

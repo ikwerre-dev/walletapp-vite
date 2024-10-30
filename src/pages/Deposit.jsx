@@ -100,7 +100,7 @@ function App() {
 
             // console.log(response.data)
 
-            if (response.data.status === 1) {
+            if (response.data.status == 1) {
                 setSubmitButtonText('I have Paid')
                 setSubmitButtonDisabled(false)
 
@@ -228,9 +228,9 @@ function App() {
     };
 
     const handleKeyPress = (key) => {
-        if (key === 'backspace') {
+        if (key == 'backspace') {
             setAmount(prev => prev.slice(0, -1));
-        } else if (key === '.') {
+        } else if (key == '.') {
             if (!amount.includes('.')) {
                 setAmount(prev => prev + key);
             }
@@ -577,7 +577,7 @@ function App() {
                                                             data={selectedCrypto && selectedCrypto.data}
                                                             instruction={selectedCrypto && selectedCrypto.instruction}
                                                             providers={selectedCrypto && selectedCrypto.name}
-                                                            isSelected={selectedMethod === selectedCrypto && selectedCrypto.name}
+                                                            isSelected={selectedMethod == selectedCrypto && selectedCrypto.name}
                                                             onClick={() => setSelectedMethod(selectedCrypto && selectedCrypto.name)}
                                                         />
 
@@ -640,7 +640,7 @@ function App() {
                                                                 className="bg-gray-100 rounded-lg p-4 text-center text-xl font-semibold"
                                                                 onClick={() => handleKeyPress(key.toString())}
                                                             >
-                                                                {key === 'backspace' ? '⌫' : key}
+                                                                {key == 'backspace' ? '⌫' : key}
                                                             </button>
                                                         ))}
                                                     </div>

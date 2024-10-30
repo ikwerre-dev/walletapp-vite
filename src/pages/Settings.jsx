@@ -44,7 +44,7 @@ const Settings = () => {
             );
 
             // console.log(response.data);
-            if (response.data.status === 1) {
+            if (response.data.status == 1) {
                 toast.success(response.data.message);
             } else {
                 toast.error(response.data.message);

@@ -38,7 +38,7 @@ const Reset = () => {
                 token // Include the token in the request body
             });
             console.log(response.data)
-            if (response.data.status === 1) {
+            if (response.data.status == 1) {
                 toast.success(response.data.message);
                 setTimeout(() => {
                     navigate('/login'); // Redirect to login after successful password reset
