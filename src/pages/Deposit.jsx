@@ -17,6 +17,7 @@ function App() {
     const [walletAddress, setWalletAddress] = useState('');
     const [amount, setAmount] = useState('');
     const [packages, setpackages] = useState([]);
+    const [disabledpackages, setdisabledpackages] = useState([]);
     const [cryptos, setcryptos] = useState([]);
     const [DepositStatus, setDepositStatus] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -192,9 +193,10 @@ function App() {
                             },
                         }
                     );
+                    setdisabledpackages(response.data.second_data);  // Set user data
                     setpackages(response.data.data);  // Set user data
                     setSelectedPackage(response.data.data[0])
-                     // console.log(response.data);  // Set user data
+                    // console.log(response.data);  // Set user data
                 } catch (error) {
                     console.error('Error fetching user details:', error);
                 }
@@ -517,6 +519,32 @@ function App() {
                                                         </button>
                                                     </div>
                                                     <div className="space-y-2">
+
+                                                        {disabledpackages.length > 0 ? (
+                                                            <>
+                                                        <div className="bg-gray-400 rounded-2xl">
+                                                            <h3 className="px-5 pt-4 text-white text-l font-bold">Unavailable Package(s)</h3>
+                                                            <p className="px-5 pt-4 text-white text-sm font-bold">
+                                                                You will be able to reinvest on this package after 30 days. This is because you recently invested on it. Kindly choose other packages below
+                                                            </p>
+                                                            <hr className='mt-3' />
+                                                            {disabledpackages.map((packages) => (
+                                                                <div
+                                                                    key={packages.name}
+                                                                    className="p-3 rounded-lg   bg-opacity-80 cursor-pointer flex items-center"
+
+                                                                >
+                                                                    <div className={`${packages.color} text-white rounded-full w-8 h-8 flex items-center justify-center mr-3`}>
+                                                                        {packages.name[0]}
+                                                                    </div>
+                                                                    <span className='text-sm'> {packages.name} (${packages.min.toLocaleString(undefined, { maximumFractionDigits: 2 })} - ${packages.max.toLocaleString(undefined, { maximumFractionDigits: 2 })})</span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                        <hr />
+                                                        </>
+                                                        ) : ''}
+
                                                         {packages.map((packages) => (
                                                             <div
                                                                 key={packages.name}
