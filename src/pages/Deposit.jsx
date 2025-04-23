@@ -98,7 +98,7 @@ function App() {
                     },
                 });
 
-            // console.log(response.data)
+            console.log(response.data)
 
             if (response.data.status == 1) {
                 setSubmitButtonText('I have Paid')
@@ -238,15 +238,25 @@ function App() {
             setAmount(prev => prev + key);
         }
     };
+    const handleProofChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProof(reader.result);
+                setSubmitButtonDisabled(false); // Enable the button when an image is uploaded
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const CompleteKeypad = (amount) => {
         if (amount < 1) amount = 0;
 
         const formattedAmount = parseFloat(amount).toFixed(2);
 
-        if (amount < selectedPackage.min) {
-            toast.error("Minimum amount is $" + selectedPackage.min.toLocaleString());
-        } else if (amount > selectedPackage.max) {
-            toast.error("Maximum amount is $" + selectedPackage.max.toLocaleString());
+        if (amount < selectedPackage.min || amount > selectedPackage.max) {
+            toast.error("Amount must be between $" + selectedPackage.min.toLocaleString() + " and $" + selectedPackage.max.toLocaleString());
         } else {
             setAmount(formattedAmount);
             closeKeypadModal();
@@ -289,6 +299,7 @@ function App() {
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     setProof(reader.result);
+                    setSubmitButtonDisabled(false); // Enable the button when an image is uploaded
                 };
                 reader.readAsDataURL(file);
             }
@@ -414,7 +425,7 @@ function App() {
                             </> :
 
                             {
-                                ...DepositStatus.data && DepositStatus.data.is_withdrawn == 0 && DepositStatus.data.task_day == 4 ?
+                                ...DepositStatus.data && DepositStatus.data.is_withdrawn == 0 && DepositStatus.data.task_day == 1 ?
                                     <>
                                         <div className='bg-indigo-500 p-5 rounded-2xl text-white w-full'>
                                             <p className='text-sm pb-3'>Please process your current withdrawal to be eligible to deposit</p>
@@ -583,9 +594,9 @@ function App() {
 
                                                     </div>
                                                     <button
-                                                        className="w-full bg-blue-600 text-white py-3 mt-3 rounded-lg font-semibold"
+                                                        className={`w-full bg-blue-600 text-white py-3 mt-3 rounded-lg font-semibold ${SubmitButtonDisabled || !proof ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                         onClick={() => openIntiatePaymentModal()}
-                                                        disabled={SubmitButtonDisabled}
+                                                        disabled={SubmitButtonDisabled || !proof} // Ensure button is disabled if no proof is uploaded
                                                     >
                                                         {SubmitButtonText}
                                                     </button>
@@ -645,8 +656,9 @@ function App() {
                                                         ))}
                                                     </div>
                                                     <button
-                                                        className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold"
+                                                        className={`w-full bg-blue-600 text-white py-3 rounded-lg font-semibold ${amount < selectedPackage.min || amount > selectedPackage.max ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                         onClick={() => CompleteKeypad(amount)}
+                                                        disabled={amount < selectedPackage.min || amount > selectedPackage.max}
                                                     >
                                                         Continue
                                                     </button>

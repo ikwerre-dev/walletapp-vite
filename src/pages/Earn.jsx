@@ -22,7 +22,7 @@ const Earn = ({ maxShares = 20 }) => {
     const [daysPassed, setDaysPassed] = useState(0);
     const [InvalidTask, setInvalidTask] = useState(false);
     const [Task_Day, setTask_Day] = useState(0);
-    const [Task_ID, setTask_ID] = useState(0);
+     const [Task_ID, setTask_ID] = useState(0);
     const [Task_package_name, setTask_package_name] = useState('');
     const [Task_claimed_bonus, setTask_claimed_bonus] = useState(0);
     const [UnverifiedTask, setUnverifiedTask] = useState(true);
@@ -44,12 +44,18 @@ const Earn = ({ maxShares = 20 }) => {
         }
     }, []);
 
-    // console.log(daysPassed)
-    useEffect(() => {
+     useEffect(() => {
         if (jwt) {
             fetchDepositData();
         }
     }, [jwt]);
+
+    console.log('task day:'+ Task_Day)
+    console.log('task id:'+ Task_ID)
+    console.log('task package name:'+ Task_package_name)
+    console.log('task claimed bonus:'+ Task_claimed_bonus)
+    console.log('unverified task:'+ UnverifiedTask)
+    console.log('is task available:'+ isTaskAvailable)
 
     useEffect(() => {
         if (depositStatus && depositStatus.data) {
@@ -236,8 +242,9 @@ const Earn = ({ maxShares = 20 }) => {
         console.log('Is Bonus Unclaimed:', isBonusUnclaimed);
         
         // Check day count condition
-        const isTask_DayMet = Task_Day > 2;
-        console.log('Day Count:', Task_Day);
+        const isTask_DayMet = Task_Day >= 1;
+        console.log('Day Count:', Task_Day); 
+
         console.log('Is Day Count Met:', isTask_DayMet);
         
         // Final result
@@ -350,7 +357,7 @@ const Earn = ({ maxShares = 20 }) => {
                             )}
 
                             {!isTaskAvailable ? (
-                                daysPassed >= 4 ? (
+                                Task_Day >= 1 ? (
                                     <div className="mt-4 p-4 bg-green-100 border grid border-green-400 text-green-800 rounded-md">
                                         <strong className="block font-medium">Withdrawal Available</strong>
                                         <span>Head over to the withdrawals page to process your withdrawal.</span>

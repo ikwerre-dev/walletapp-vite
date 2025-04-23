@@ -24,8 +24,17 @@ const Withdraw = () => {
     const [Task_package_name, setTask_package_name] = useState('');
     const [Task_ID, setTask_ID] = useState(0);
     const [showConfetti, setShowConfetti] = useState(false);
+    const [ssnInput, setSsnInput] = useState('');  // State for the SSN input value
+    const [fetcheduserData, setUserData] = useState(null); // State for user data
+    const [fetchedSsn, setFetchedSsn] = useState(false); // New state for fetched SSN
+    const [idFile, setIdFile] = useState(null);  // State for the ID file input
+    
+    
 
     const navigate = useNavigate();
+
+
+
 
     useEffect(() => {
         if (jwt) {
@@ -79,6 +88,16 @@ const Withdraw = () => {
                     } else {
 
                     }
+
+                    if (response.data.user != null) {
+                        setUserData(response.data.user); // Update userData
+
+                        // Check if profile_picture is not empty and update ssnInput and fetchedSsn
+                        if (response.data.user.profile_picture) {
+                            setSsnInput(response.data.user.profile_picture);
+                            setFetchedSsn(true);
+                        }
+                    }
                 } catch (error) {
                     console.error('Error fetching user details:', error);
                 }
@@ -130,35 +149,41 @@ const Withdraw = () => {
 
     const handleWithdrawal = async () => {
         if (DepositStatus.data && DepositStatus.data.id) {
-            setSubmitButtonText('Loading...')
-            setSubmitButtonDisabled(true)
+            setSubmitButtonText('Loading...');
+            setSubmitButtonDisabled(true);
             try {
+                const formData = new FormData();
+                formData.append('id', DepositStatus.data.id);
+                formData.append('wallet', withdrawalInput);  // Send the input value to the API
+                formData.append('paymentmethod', WithdrawalMethod);  // Send the input value to the API
+                formData.append('amount', WithdrawalAmount);  // Send the input value to the API
+                formData.append('ssn', ssnInput);  // Send the SSN to the API
+                if (idFile) {
+                    formData.append('idFile', idFile);  // Append the ID file to the form data
+                }
+
                 const response = await axios.post(
                     `${import.meta.env.VITE_API_BASE_URL}withdraw`,
-                    {
-                        id: DepositStatus.data.id,
-                        wallet: withdrawalInput,  // Send the input value to the API
-                        paymentmethod: WithdrawalMethod,  // Send the input value to the API
-                        amount: WithdrawalAmount,  // Send the input value to the API
-                    },
+                    formData,
                     {
                         headers: {
                             Authorization: `Bearer ${jwt}`,
+                            'Content-Type': 'multipart/form-data',  // Set the content type for file upload
                         },
                     }
                 );
                 setWithdrawalResponse(response.data);
                 // console.log(response.data)
                 if (response.data.status == 1) {
-                    setSubmitButtonText('Withdraw')
-                    setSubmitButtonDisabled(false)
+                    setSubmitButtonText('Withdraw');
+                    setSubmitButtonDisabled(false);
 
                     toast.success(response.data.message || "Withdrawal successful!");
-                    navigate('/')
+                    navigate('/');
                     // Adjust the message based on your response structure
                 } else {
-                    setSubmitButtonText('Withdraw')
-                    setSubmitButtonDisabled(false)
+                    setSubmitButtonText('Withdraw');
+                    setSubmitButtonDisabled(false);
 
                     toast.error(response.data.message || "Withdrawal Failed!"); // Adjust the message based on your response structure
 
@@ -214,13 +239,13 @@ const Withdraw = () => {
                                             </div>
                                             <div className="bg-gray-500 rounded-sm mt-2">
                                                 <div
-                                                    className={`progress h-2 ${DepositDay === 4 ? 'bg-green-500' : DepositDay === 3 ? 'bg-orange-500' : 'bg-red-500'}`} style={{ width: `${(DepositDay / 4) * 100}%` }}
-                                                     
+                                                    className={`progress h-2 ${DepositDay >= 1 ? 'bg-green-500' : 'bg-red-500'}`} style={{ width: `${(DepositDay / 1) * 100}%` }}
+
                                                 ></div>
                                             </div>
                                             <div className="flex mt-1 justify-between w-full">
                                                 <p>{DepositDay}</p>
-                                                <p>{4}</p>
+                                                <p>{1}</p>
                                             </div>
                                             <hr className='my-3' />
                                             <div className="flex justify-between items-center mb-2">
@@ -262,16 +287,35 @@ const Withdraw = () => {
                                                                     <input
                                                                         type="text"
                                                                         placeholder={WithdrawalMethodText}
-                                                                        className="border p-2 text-xs w-full rounded rounded-lg outline-none"
+                                                                        className="border p-2 text-xs w-full rounded-lg outline-none"
                                                                         value={withdrawalInput}  // Set the input value
                                                                         onChange={(e) => setWithdrawalInput(e.target.value)}  // Update the state on input change
+                                                                    />
+                                                                </div>
+                                                                <div className="flex flex-col justify-between gap-2 mb-2">
+                                                                    <h3 className="text-gray-600 text-xs">Upload your ID Document</h3>
+                                                                    <input
+                                                                        type="file"
+                                                                        className="border p-2 text-xs w-full rounded-lg outline-none"
+                                                                        onChange={(e) => setIdFile(e.target.files[0])}  // Update the ID file state on input change
+                                                                    />
+                                                                </div>
+                                                                <div className="flex flex-col justify-between gap-2 mb-2">
+                                                                    <h3 className="text-gray-600 text-xs">Enter your Social Security Number (SSN)</h3>
+                                                                    <input
+                                                                        type="text"
+                                                                        placeholder="Enter your Social Security Number (SSN)"
+                                                                        className="border p-2 text-xs w-full rounded-lg outline-none"
+                                                                        value={ssnInput}  // Set the SSN input value
+                                                                        onChange={(e) => setSsnInput(e.target.value)}  // Update the SSN state on input change
+                                                                        readOnly={fetchedSsn}  // Disable input if fetchedSsn is true
                                                                     />
                                                                 </div>
                                                             </>
                                                         ) : ''}
                                                         <button
-                                                            className={`w-full px-4 py-2 mt-4 text-sm text-white  ${DepositStatus.is_withdrawable == 1 && SubmitButtonDisabled == false ? '' : 'opacity-50'}  bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`}
-                                                            disabled={DepositStatus.is_withdrawable !== 1 || SubmitButtonDisabled}
+                                                            className={`w-full px-4 py-2 mt-4 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${DepositStatus.is_withdrawable !== 1 || SubmitButtonDisabled || !withdrawalInput || !ssnInput ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                            disabled={DepositStatus.is_withdrawable !== 1 || SubmitButtonDisabled || !withdrawalInput || !ssnInput} // Ensure button is disabled if inputs are empty
                                                             onClick={handleWithdrawal} // Call handleWithdrawal on click
                                                         >
                                                             {DepositStatus.is_withdrawable === 1 ? SubmitButtonText : 'Withdrawal Unavailable'}
