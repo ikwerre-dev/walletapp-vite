@@ -341,7 +341,7 @@ function App() {
                     <p className={`text-sm ${isSelected ? 'text-blue-600' : 'text-gray-700'}`}>{name}</p>
 
                     <div className="items-center flex justify-center mt-5">
-                        {qr && (
+                        {qr == 1 && (
                             <div className="mt-2">
                                 <QRCode value={data} size={100} />
                             </div>
