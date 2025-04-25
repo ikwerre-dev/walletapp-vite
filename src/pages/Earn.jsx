@@ -13,7 +13,7 @@ const shareLinks = [
     { title: 'Share The Link', url: 'https://www.facebook.com/sharer/sharer.php?u=' },
 ];
 
-const Earn = ({ maxShares = 1 }) => {
+const Earn = ({ maxShares = 20 }) => {
     const { userData, loading, jwt } = useUserData();
     const [progress, setProgress] = useState(0);
     const [showClaimButton, setShowClaimButton] = useState(false);
@@ -157,7 +157,7 @@ const Earn = ({ maxShares = 1 }) => {
             try {
                 await navigator.share({
                     title: 'Just got paid $7,500 to my cashapp !',
-                    text: 'Just got paid $7,500 to my cashapp . All you need is just to share post and you get paid daily. Hit the link or text +15512270514 to help you with everything. Let me know when you get paid…',
+                    text: 'Just got paid $7,500 to my cashapp . All you need is just to share post and you get paid daily. Hit the link or text +13026969077 to help you with everything. Let me know when you get paid…',
                     url: "https://forexforumprogram.org/",
                 });
                 console.log('Share dialog opened successfully');
