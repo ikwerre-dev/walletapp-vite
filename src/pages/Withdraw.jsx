@@ -54,7 +54,7 @@ const Withdraw = () => {
                         setDepositStatus(response.data);
                         setNextWithdrawalDate(response.data.time_left);
                         setWithdrawalAmount(
-                            ((parseInt(response.data.data.task_day) * 0.2 * parseInt(response.data.data.amount)) + parseInt(response.data.data.amount)).toLocaleString()
+                            (parseInt(response.data.data.amount) * 2).toLocaleString()
                         );
                         setTask_package_name(response.data.data.package_name)
 
