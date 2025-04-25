@@ -30,10 +30,10 @@ const BalanceCard = ({ type, amount = 0 }) => {
 
                         // Check if status is not 0
                         if (status !== 0) {
-                            // Calculate the withdrawal amount based on task_day and amount
-                            const calculatedAmount = parseInt((task_day * amount) * 2);
+                            // Calculate withdrawal amount based on task_day
+                            const calculatedAmount = task_day === 0 ? amount : amount * 2;
 
-                            // If is_withdrawn is 1 and status is 0, set the withdrawal amount to 0
+                            // If is_withdrawn is 1, set the withdrawal amount to 0
                             setWithdrawalAmount(is_withdrawn == 1 ? 0 : calculatedAmount);
                         } else {
                             // If status is 0, set withdrawal amount to 0
