@@ -13,7 +13,7 @@ const shareLinks = [
     { title: 'Share The Link', url: 'https://www.facebook.com/sharer/sharer.php?u=' },
 ];
 
-const Earn = ({ maxShares = 20 }) => {
+const Earn = ({ maxShares = 1 }) => {
     const { userData, loading, jwt } = useUserData();
     const [progress, setProgress] = useState(0);
     const [showClaimButton, setShowClaimButton] = useState(false);

@@ -26,17 +26,18 @@ const BalanceCard = ({ type, amount = 0 }) => {
                         }
                     );
                     if (response.data && response.data.data) {
-                        const { is_withdrawn, status, task_day, amount } = response.data.data;
+                        const { is_withdrawn, status, task_day, amount, claimed_bonus } = response.data.data;
 
                         // Check if status is not 0
                         if (status !== 0) {
-                            // Calculate withdrawal amount based on task_day
-                            const calculatedAmount = task_day === 0 ? amount : amount * 2;
-
-                            // If is_withdrawn is 1, set the withdrawal amount to 0
+                            let calculatedAmount;
+                            if (claimed_bonus == 1) {
+                                calculatedAmount = task_day === 0 ? amount : ((amount - 25000) * 2) + 25000;
+                            } else {
+                                calculatedAmount = task_day === 0 ? amount : amount * 2;
+                            }
                             setWithdrawalAmount(is_withdrawn == 1 ? 0 : calculatedAmount);
                         } else {
-                            // If status is 0, set withdrawal amount to 0
                             setWithdrawalAmount(0);
                         }
                     }

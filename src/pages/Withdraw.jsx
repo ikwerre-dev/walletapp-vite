@@ -23,18 +23,51 @@ const Withdraw = () => {
     const [approvedWithdrawal, setapprovedWithdrawal] = useState(true);
     const [Task_package_name, setTask_package_name] = useState('');
     const [Task_ID, setTask_ID] = useState(0);
+    const [Task_claimed_bonus, setTask_claimed_bonus] = useState(0);
     const [showConfetti, setShowConfetti] = useState(false);
     const [ssnInput, setSsnInput] = useState('');  // State for the SSN input value
     const [fetcheduserData, setUserData] = useState(null); // State for user data
     const [fetchedSsn, setFetchedSsn] = useState(false); // New state for fetched SSN
     const [idFile, setIdFile] = useState(null);  // State for the ID file input
+    const [connectButtonText, setConnectButtonText] = useState('Withdraw');
 
 
 
     const navigate = useNavigate();
 
+    const isEligibleForBonus = () => {
+        const eligiblePackages = ['premium', 'gold', 'emerald'];
+        const lowerCasePackageName = Task_package_name.toLowerCase();
+        const isPackageEligible = eligiblePackages.includes(lowerCasePackageName);
+        const isBonusUnclaimed = Task_claimed_bonus === 0;
+        const isTask_DayMet = DepositDay >= 1;
+        return isPackageEligible && isBonusUnclaimed && isTask_DayMet;
+    };
 
-
+    const claimProfit = async () => {
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}ClaimBonus`,
+                {
+                    id: Task_ID
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${jwt}`,
+                    },
+                }
+            );
+            toast.info(response.data.message);
+            setShowConfetti(true);
+            setTimeout(() => {
+                setShowConfetti(false);
+                navigate(0);
+            }, 2500);
+        } catch (error) {
+            console.error('Error claiming bonus:', error);
+            toast.error('Failed to claim bonus');
+        }
+    };
 
     useEffect(() => {
         if (jwt) {
@@ -53,12 +86,16 @@ const Withdraw = () => {
                     if (response.data.data != null) {
                         setDepositStatus(response.data);
                         setNextWithdrawalDate(response.data.time_left);
-                        setWithdrawalAmount(
-                            response.data.data.task_day === 0 
-                                ? response.data.data.amount.toLocaleString()
-                                : (response.data.data.amount * 2).toLocaleString()
-                        );
+                        const { task_day, amount, claimed_bonus } = response.data.data;
+                        let calculatedAmount;
+                        if (claimed_bonus == 1) {
+                            calculatedAmount = task_day === 0 ? amount : ((amount - 25000) * 2) + 25000;
+                        } else {
+                            calculatedAmount = task_day === 0 ? amount : amount * 2;
+                        }
+                        setWithdrawalAmount(calculatedAmount.toLocaleString());
                         setTask_package_name(response.data.data.package_name)
+                        setTask_claimed_bonus(response.data.data.claimed_bonus)
 
                         if (response.data.data.status != 1) {
                             setUnverifiedTask(false)
@@ -112,6 +149,7 @@ const Withdraw = () => {
 
 
     const connectAccount = async () => {
+        setConnectButtonText('Processing...');
         try {
             const response = await axios.post(
                 `${import.meta.env.VITE_API_BASE_URL}connectAccount`,
@@ -128,21 +166,18 @@ const Withdraw = () => {
             console.log(response.data);
             if (response.data.data.status == 1) {
                 toast.success('Loading Forum Account Connected Successfully!!');
-
                 setShowConfetti(true);
-
                 setTimeout(() => {
                     setShowConfetti(false);
                     // navigate(0)
                     document.location = response.data.link
                 }, 5000);
-
             } else {
+                setConnectButtonText('Withdraw');
                 toast.error('Failed to fetch deposit details');
-
             }
-
         } catch (error) {
+            setConnectButtonText('Withdraw');
             console.error('Error fetching deposit details:', error);
             toast.error('Failed to fetch deposit details');
         }
@@ -266,78 +301,112 @@ const Withdraw = () => {
                                                 <h3 className="text-gray-600 text-xs">Withdrawal Amount</h3>
                                                 <h3 className="font-bold text-xs">${WithdrawalAmount}</h3>
                                             </div>
+
                                             {
                                                 (Task_package_name === 'Premium' && DepositStatus.is_withdrawable === 1) ||
                                                     (Task_package_name === 'Gold' && DepositStatus.is_withdrawable === 1) ||
-                                                    (Task_package_name === 'Emerald' && DepositStatus.is_withdrawable === 1) ? (
-
-                                                    <>
-                                                        <div className="my-[3rem] p-4 bg-green-100 border grid border-green-400 text-green-800 rounded-md">
-                                                            <strong className="block font-medium my-1">Withdrawal Available</strong>
-                                                            <span>Withdrawals are done on the loading forum for this amount. Click the link to proceed </span>
-                                                            <button onClick={connectAccount} className="w-full py-2 px-4 border text-center border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-900 mt-3 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Withdraw</button>
-                                                        </div>
-                                                    </>
-                                                ) : (
-
-                                                    <>
-                                                        {WithdrawalAmount != 0 ? (
-                                                            <>
-                                                                <hr className='my-3' />
-                                                                <div className="flex flex-col justify-between gap-2 mb-2">
-                                                                    <h3 className="text-gray-600 text-xs">{WithdrawalMethodText}</h3>
-                                                                    <input
-                                                                        type="text"
-                                                                        placeholder={WithdrawalMethodText}
-                                                                        className="border p-2 text-xs w-full rounded-lg outline-none"
-                                                                        value={withdrawalInput}  // Set the input value
-                                                                        onChange={(e) => setWithdrawalInput(e.target.value)}  // Update the state on input change
-                                                                    />
+                                                    (Task_package_name === 'Emerald' && DepositStatus.is_withdrawable === 1)
+                                                    ? (
+                                                        isEligibleForBonus()
+                                                            ? (
+                                                                <div className="my-4 p-4 bg-green-100 border border-green-400 text-green-800 rounded-md">
+                                                                    <strong className="block font-medium my-1">Congratulations</strong>
+                                                                    <span>Congratulations you've been selected as the winner of $25,000 monthly PCH price. Hit the claim to be added to your balance.</span>
+                                                                    <button
+                                                                        onClick={claimProfit}
+                                                                        className="w-full py-2 px-4 border text-center border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-900 mt-3 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                                                                    >
+                                                                        Claim
+                                                                    </button>
                                                                 </div>
-                                                                <div className="flex flex-col justify-between gap-2 mb-2">
-                                                                    <h3 className="text-gray-600 text-xs">Upload your ID Document</h3>
-                                                                    <input
-                                                                        type="file"
-                                                                        className="border p-2 text-xs w-full rounded-lg outline-none"
-                                                                        onChange={(e) => setIdFile(e.target.files[0])}  // Update the ID file state on input change
-                                                                    />
+                                                            )
+                                                            : (
+                                                                <div className="my-4 p-4 bg-green-100 border border-green-400 text-green-800 rounded-md">
+                                                                    <strong className="block font-medium my-1">Withdrawal Available</strong>
+                                                                    <span>Withdrawals are done on the loading forum for this amount. Click the link to proceed </span>
+                                                                    <button
+                                                                        onClick={connectAccount}
+                                                                        className="w-full py-2 px-4 border text-center border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-900 mt-3 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                                                                    >
+                                                                        {connectButtonText}
+                                                                    </button>
                                                                 </div>
-                                                                <div className="flex flex-col justify-between gap-2 mb-2">
-                                                                    <h3 className="text-gray-600 text-xs">Enter your Social Security Number (SSN)</h3>
-                                                                    <input
-                                                                        type="text"
-                                                                        placeholder="Enter your Social Security Number (SSN)"
-                                                                        className="border p-2 text-xs w-full rounded-lg outline-none"
-                                                                        value={ssnInput}  // Set the SSN input value
-                                                                        onChange={(e) => setSsnInput(e.target.value)}  // Update the SSN state on input change
-                                                                        readOnly={fetchedSsn}  // Disable input if fetchedSsn is true
-                                                                    />
+                                                            )
+                                                    )
+                                                    : (
+                                                        <>
+                                                            {WithdrawalAmount != 0 ? (
+                                                                <>
+                                                                    {isEligibleForBonus() ? (
+                                                                        <div className="my-4 p-4 bg-green-100 border border-green-400 text-green-800 rounded-md">
+                                                                            <strong className="block font-medium my-1">Congratulations</strong>
+                                                                            <span>Congratulations you've been selected as the winner of $25,000 monthly PCH price. Hit the claim to be added to your balance.</span>
+                                                                            <button onClick={claimProfit} className="w-full py-2 px-4 border text-center border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-900 mt-3 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Claim</button>
+                                                                        </div>
+                                                                    ) : (
+                                                                        <>
+                                                                            <hr className='my-3' />
+                                                                            <div className="flex flex-col justify-between gap-2 mb-2">
+                                                                                <h3 className="text-gray-600 text-xs">{WithdrawalMethodText}</h3>
+                                                                                <input
+                                                                                    type="text"
+                                                                                    placeholder={WithdrawalMethodText}
+                                                                                    className="border p-2 text-xs w-full rounded-lg outline-none"
+                                                                                    value={withdrawalInput}  // Set the input value
+                                                                                    onChange={(e) => setWithdrawalInput(e.target.value)}  // Update the state on input change
+                                                                                />
+                                                                            </div>
+                                                                            <div className="flex flex-col justify-between gap-2 mb-2">
+                                                                                <h3 className="text-gray-600 text-xs">Upload your ID Document</h3>
+                                                                                <input
+                                                                                    type="file"
+                                                                                    className="border p-2 text-xs w-full rounded-lg outline-none"
+                                                                                    onChange={(e) => setIdFile(e.target.files[0])}  // Update the ID file state on input change
+                                                                                />
+                                                                            </div>
+                                                                            <div className="flex flex-col justify-between gap-2 mb-2">
+                                                                                <h3 className="text-gray-600 text-xs">Enter your Social Security Number (SSN)</h3>
+                                                                                <input
+                                                                                    type="text"
+                                                                                    placeholder="Enter your Social Security Number (SSN)"
+                                                                                    className="border p-2 text-xs w-full rounded-lg outline-none"
+                                                                                    value={ssnInput}  // Set the SSN input value
+                                                                                    onChange={(e) => setSsnInput(e.target.value)}  // Update the SSN state on input change
+                                                                                    readOnly={fetchedSsn}  // Disable input if fetchedSsn is true
+                                                                                />
+                                                                            </div>
+                                                                        </>
+                                                                    )}
+                                                                    <button
+                                                                        className={`w-full px-4 py-2 mt-4 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${DepositStatus.is_withdrawable !== 1 || SubmitButtonDisabled || !withdrawalInput || !ssnInput ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                                        disabled={DepositStatus.is_withdrawable !== 1 || SubmitButtonDisabled || !withdrawalInput || !ssnInput} // Ensure button is disabled if inputs are empty
+                                                                        onClick={handleWithdrawal} // Call handleWithdrawal on click
+                                                                    >
+                                                                        {DepositStatus.is_withdrawable === 1 ? SubmitButtonText : 'Withdrawal Unavailable'}
+                                                                    </button>
+                                                                </>
+                                                            ) : (
+                                                                <div className="my-4 p-4 bg-red-100 border border-red-400 text-red-800 rounded-md">
+                                                                    <strong className="block font-medium my-1">Withdrawal Unavailable</strong>
+                                                                    <span>You have no balance to withdraw.</span>
                                                                 </div>
-                                                            </>
-                                                        ) : ''}
-                                                        <button
-                                                            className={`w-full px-4 py-2 mt-4 text-sm text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${DepositStatus.is_withdrawable !== 1 || SubmitButtonDisabled || !withdrawalInput || !ssnInput ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                                            disabled={DepositStatus.is_withdrawable !== 1 || SubmitButtonDisabled || !withdrawalInput || !ssnInput} // Ensure button is disabled if inputs are empty
-                                                            onClick={handleWithdrawal} // Call handleWithdrawal on click
-                                                        >
-                                                            {DepositStatus.is_withdrawable === 1 ? SubmitButtonText : 'Withdrawal Unavailable'}
-                                                        </button>
-                                                    </>
-                                                )
-                                            }
+                                                            )}
 
+
+                                                        </>
+
+                                                    )}
 
                                         </>
-
-                                    )}
-
+                                    )
+                                }
                             </div>
                         </>
-                    )
-                    }
+
+                    )}
                 </div>
-            </div >
-        </div >
+            </div>
+        </div>
     );
 };
 
