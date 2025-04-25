@@ -28,8 +28,8 @@ const Withdraw = () => {
     const [fetcheduserData, setUserData] = useState(null); // State for user data
     const [fetchedSsn, setFetchedSsn] = useState(false); // New state for fetched SSN
     const [idFile, setIdFile] = useState(null);  // State for the ID file input
-    
-    
+
+
 
     const navigate = useNavigate();
 
@@ -54,7 +54,7 @@ const Withdraw = () => {
                         setDepositStatus(response.data);
                         setNextWithdrawalDate(response.data.time_left);
                         setWithdrawalAmount(
-                            (parseInt(response.data.data.amount) * 2).toLocaleString()
+                            (parseInt(response.data.data.amount * response.data.data.task_day) * 2).toLocaleString()
                         );
                         setTask_package_name(response.data.data.package_name)
 
